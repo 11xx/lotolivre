@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Figtree:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4b5563; } a:hover { color: #111827; }
+    .screen, .sheet { font-family: 'Google Sans', Figtree, Roboto, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .theme-light { --bg:#FAF9FC; --surface:#FFFFFF; --ink:#191A1F; --muted:#54535D; --line:#E4E2EA;
+      --aL:0.54; --aC:0.15; --sL:0.945; --sC:0.045; --kL:0.40; --kC:0.12;
+      --wL:0.982; --wC:0.016; --eL:0.905; --eC:0.038; --oL:0.99; --oC:0.005; }
+    .theme-dark { --bg:#0F1014; --surface:#18181E; --ink:#E8E5ED; --muted:#ACAAB6; --line:#2B2A33;
+      --aL:0.80; --aC:0.14; --sL:0.33; --sC:0.070; --kL:0.93; --kC:0.065;
+      --wL:0.225; --wC:0.026; --eL:0.345; --eC:0.048; --oL:0.20; --oC:0.045; }
+    .g { --accent: oklch(var(--aL) var(--aC) var(--h));
+         --soft:   oklch(var(--sL) var(--sC) var(--h));
+         --chipink:oklch(var(--kL) var(--kC) var(--h));
+         --wash:   oklch(var(--wL) var(--wC) var(--h));
+         --edge:   oklch(var(--eL) var(--eC) var(--h));
+         --onaccent: oklch(var(--oL) var(--oC) var(--h)); }
+    .tnum { font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+    .nums { display: flex; flex-wrap: wrap; gap: 7px; }
+    .num { font-variant-numeric: tabular-nums; font-weight: 500; font-size: 15px;
+           width: 34px; height: 34px; border-radius: 999px; background: var(--accent); color: var(--onaccent);
+           display: flex; align-items: center; justify-content: center; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+    .step { display: flex; align-items: center; justify-content: center; gap: 5px; height: 44px; padding: 0 12px;
+            border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: 13px; font-weight: 500; }
+    .team { font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mark { font-variant-numeric: tabular-nums; font-weight: 500; font-size: 12px;
+            width: 26px; height: 26px; border-radius: 999px; background: var(--accent); color: var(--onaccent);
+            display: flex; align-items: center; justify-content: center; }
+  </style>
+</helmet>
+<div class="screen theme-{{theme}} g" style="--h: 205; width: 390px; min-height: 844px; background: var(--bg); color: var(--ink); display: flex; flex-direction: column;">
+
+  <header style="display: flex; align-items: center; gap: 4px; padding: 8px 8px 4px;">
+    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+    </div>
+    <h1 style="margin: 0; flex-grow: 1; font-size: 20px; font-weight: 700; letter-spacing: -0.01em;">Loteca</h1>
+    <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8.5 7.5L12 4l3.5 3.5"></path><path d="M5 13v6a1 1 0 001 1h12a1 1 0 001-1v-6"></path></svg>
+    </div>
+  </header>
+
+  <div style="display: flex; align-items: center; gap: 8px; padding: 4px 16px 14px;">
+    <div class="step">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+      Anterior
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;">
+      <span class="tnum" style="font-size: 14px; font-weight: 700;">Concurso 1266</span>
+      <span class="tnum" style="font-size: 11px; color: var(--muted);">17/08/2026</span>
+    </div>
+    <div class="step" style="color: var(--muted); opacity: 0.45;">
+      Próximo
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 0 16px 24px;">
+
+    <section class="card" style="overflow: hidden;">
+      <sc-for list="{{matches}}" as="m" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 20px minmax(0, 1fr) 26px; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line);">
+          <span class="tnum" style="font-size: 11px; color: var(--muted);">{{m.n}}</span>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px;">
+            <span class="team" style="text-align: right;">{{m.home}}</span>
+            <span class="tnum" style="font-size: 13px; font-weight: 700;">{{m.score}}</span>
+            <span class="team">{{m.away}}</span>
+          </div>
+          <span class="mark">
+            <sc-if value="{{m.isDraw}}" hint-placeholder-val="{{false}}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if>
+            <sc-if value="{{m.isPlayed}}" hint-placeholder-val="{{true}}">{{m.mark}}</sc-if>
+          </span>
+        </div>
+      </sc-for>
+    </section>
+
+    <section class="card">
+      <div style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.75fr) minmax(0, 1.1fr); align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--line);">
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted);">Faixa</span>
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted); text-align: right;">Ganhadores</span>
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted); text-align: right;">Prêmio</span>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.75fr) minmax(0, 1.1fr); align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--line);">
+        <span style="font-size: 14px; font-weight: 500;">14 acertos</span>
+        <span class="tnum" style="font-size: 14px; text-align: right;">0</span>
+        <span class="tnum" style="font-size: 13px; font-weight: 500; color: var(--accent); text-align: right;">Acumulou</span>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.75fr) minmax(0, 1.1fr); align-items: center; gap: 8px; padding: 11px 14px;">
+        <span style="font-size: 14px; font-weight: 500;">13 acertos</span>
+        <span class="tnum" style="font-size: 14px; text-align: right;">1</span>
+        <span class="tnum" style="font-size: 14px; text-align: right;">R$ 75.126,21</span>
+      </div>
+    </section>
+
+    <section class="card" style="padding: 15px 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 13px; color: var(--muted);">Estimativa 1267</span>
+        <span class="tnum" style="font-size: 11px; color: var(--muted);">22/08/2026</span>
+      </div>
+      <span class="tnum" style="font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.02em;">R$ 1.200.000,00</span>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Tema"},"$preview":{"width":390,"height":1120}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const raw = [
+      [1, 'Fluminense', 3, 2, 'Palmeiras'], [2, 'Atlético', 0, 2, 'Vila Nova'],
+      [3, 'Criciúma', 1, 0, 'Goiás'], [4, 'Sevilla', 2, 1, 'Rayo Vallecano'],
+      [5, 'Athletico', 1, 1, 'Bragantino'], [6, 'Juventude', 0, 0, 'Fortaleza'],
+      [7, 'São Paulo', 1, 1, 'Coritiba'], [8, 'Chapecoense', 3, 3, 'Bahia'],
+      [9, 'Atlético', 3, 0, 'Grêmio'], [10, 'Vasco da Gama', 0, 3, 'Santos'],
+      [11, 'Celta de Vigo', 0, 0, 'Osasuna'], [12, 'Mirassol', 1, 5, 'Flamengo'],
+      [13, 'Vitória', 1, 0, 'Botafogo'], [14, 'Corinthians', 1, 2, 'Cruzeiro'],
+    ];
+    return {
+      theme: this.props.theme ?? 'light',
+      matches: raw.map(([n, home, gh, ga, away]) => ({
+        n, home, away, score: gh + '×' + ga,
+        mark: gh > ga ? '1' : (ga > gh ? '2' : 'X'),
+        isDraw: gh === ga, isPlayed: gh !== ga,
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

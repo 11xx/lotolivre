@@ -1,0 +1,21 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",         "title": "Resultados · claro",  "x": 0,    "y": 0, "w": 390, "h": 2080 },
+    { "file": "DashboardDark.dc.html","title": "Resultados · escuro", "x": 450,  "y": 0, "w": 390, "h": 2080 },
+    { "file": "Menu.dc.html",         "title": "Menu",                "x": 900,  "y": 0, "w": 390, "h": 844 },
+    { "file": "Detail.dc.html",       "title": "Detalhe · claro",     "x": 1350, "y": 0, "w": 390, "h": 844 },
+    { "file": "DetailDark.dc.html",   "title": "Detalhe · escuro",    "x": 1800, "y": 0, "w": 390, "h": 844 },
+    { "file": "DetailLoteca.dc.html", "title": "Detalhe · Loteca",    "x": 2250, "y": 0, "w": 390, "h": 1120 }
+  ],
+  "annotations": [
+    { "id": "altura-cartao", "x": 0, "y": -170, "w": 420,
+      "text": "Bolas em todas as listas. A altura do cartão acompanha o que o jogo sorteia — Quina 5, Lotofácil 15, Lotomania 20, Federal 5 bilhetes, Loteca 14 jogos — e nunca o tamanho do prêmio, que faria a lista pular de semana em semana." },
+    { "id": "menu-sobre", "x": 900, "y": -170, "w": 420,
+      "text": "A barra inferior saiu: duas abas não sustentavam uma barra. Menu lateral com Resultados, Sobre e o tema (sistema, claro, escuro).\nSobre é onde ficam o aviso de app não oficial e os créditos de marca." },
+    { "id": "fonte", "x": 900, "y": 900, "w": 480,
+      "text": "Tipografia: Google Sans, uma família só, algarismos tabulares, sem monoespaçada.\nO catálogo do Google Fonts serve a família, mas ela não está no repositório de licenças abertas — no app isso aponta para fonte baixada em tempo de execução, com uma alternativa empacotada como reserva." },
+    { "id": "simbolos", "x": 2250, "y": 1180, "w": 400,
+      "text": "Empate na Loteca é um × desenhado, não a letra X: a maiúscula sobe acima da altura dos algarismos e desalinha a coluna.\nOs trevos da +Milionária ficam numa segunda linha com o mesmo recuo das dezenas, marcada pelo trevo — a linha diz outra coisa, e a borda esquerda continua alinhada." }
+  ],
+  "launch": { "view": "canvas" }
+}

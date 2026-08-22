@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Figtree:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4b5563; } a:hover { color: #111827; }
+    .screen, .sheet { font-family: 'Google Sans', Figtree, Roboto, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .theme-light { --bg:#FAF9FC; --surface:#FFFFFF; --ink:#191A1F; --muted:#54535D; --line:#E4E2EA;
+      --aL:0.54; --aC:0.15; --sL:0.945; --sC:0.045; --kL:0.40; --kC:0.12;
+      --wL:0.982; --wC:0.016; --eL:0.905; --eC:0.038; --oL:0.99; --oC:0.005; }
+    .theme-dark { --bg:#0F1014; --surface:#18181E; --ink:#E8E5ED; --muted:#ACAAB6; --line:#2B2A33;
+      --aL:0.80; --aC:0.14; --sL:0.33; --sC:0.070; --kL:0.93; --kC:0.065;
+      --wL:0.225; --wC:0.026; --eL:0.345; --eC:0.048; --oL:0.20; --oC:0.045; }
+    .g { --accent: oklch(var(--aL) var(--aC) var(--h));
+         --soft:   oklch(var(--sL) var(--sC) var(--h));
+         --chipink:oklch(var(--kL) var(--kC) var(--h));
+         --wash:   oklch(var(--wL) var(--wC) var(--h));
+         --edge:   oklch(var(--eL) var(--eC) var(--h));
+         --onaccent: oklch(var(--oL) var(--oC) var(--h)); }
+    .tnum { font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+    .nums { display: flex; flex-wrap: wrap; gap: 7px; }
+    .num { font-variant-numeric: tabular-nums; font-weight: 500; font-size: 15px;
+           width: 34px; height: 34px; border-radius: 999px; background: var(--accent); color: var(--onaccent);
+           display: flex; align-items: center; justify-content: center; }
+    .item { display: flex; align-items: center; gap: 14px; height: 48px; padding: 0 16px; border-radius: 999px; font-size: 15px; font-weight: 500; }
+    .seg { display: flex; align-items: center; justify-content: center; height: 44px; font-size: 13px; font-weight: 500; border: 1px solid var(--line); }
+  </style>
+</helmet>
+<div class="screen theme-{{theme}}" style="position: relative; width: 390px; height: 844px; background: var(--bg); color: var(--ink); overflow: hidden;">
+
+  <div style="display: flex; flex-direction: column; gap: 2px; padding: 6px 8px 14px;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </div>
+      <span class="tnum" style="font-size: 11px; color: var(--muted); padding-right: 10px;">atualizado 09:12</span>
+    </div>
+    <h1 style="margin: 0; padding: 0 10px; font-size: 27px; font-weight: 700; letter-spacing: -0.015em;">LotoLivre</h1>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 16px;">
+    <sc-for list="{{games}}" as="game" hint-placeholder-count="3">
+      <article class="g" style="--h: {{game.hue}}; background: var(--wash); border: 1px solid var(--edge); border-radius: 16px; padding: 13px 14px 12px; display: flex; flex-direction: column; gap: 11px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;">{{game.name}}</h2>
+          <span class="tnum" style="font-size: 11px; color: var(--muted);">{{game.draw}}</span>
+        </div>
+        <div class="nums">
+          <sc-for list="{{game.nums}}" as="n" hint-placeholder-count="6"><span class="num">{{n}}</span></sc-for>
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-top: 1px solid var(--edge); padding-top: 10px;">
+          <span style="font-size: 12px; color: var(--muted);">{{game.status}}</span>
+          <span class="tnum" style="font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: -0.01em;">{{game.prize}}</span>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+
+  <div style="position: absolute; inset: 0; background: rgba(10, 10, 14, 0.46);"></div>
+
+  <aside style="position: absolute; top: 0; left: 0; width: 302px; height: 844px; background: var(--surface); border-right: 1px solid var(--line); border-radius: 0 18px 18px 0; display: flex; flex-direction: column; gap: 18px; padding: 22px 12px;">
+    <h2 style="margin: 0; padding: 0 10px; font-size: 22px; font-weight: 700; letter-spacing: -0.015em;">LotoLivre</h2>
+
+    <nav style="display: flex; flex-direction: column; gap: 4px;">
+      <div class="item" style="background: var(--line);">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+        Resultados
+      </div>
+      <div class="item" style="color: var(--muted);">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+        Sobre
+      </div>
+    </nav>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding: 18px 6px 0;">
+      <span style="font-size: 12px; font-weight: 500; color: var(--muted); padding-left: 10px;">Tema</span>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));">
+        <div class="seg" style="border-radius: 999px 0 0 999px; background: var(--line);">Sistema</div>
+        <div class="seg" style="border-left: none; border-right: none; color: var(--muted);">Claro</div>
+        <div class="seg" style="border-radius: 0 999px 999px 0; color: var(--muted);">Escuro</div>
+      </div>
+    </div>
+  </aside>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      theme: this.props.theme ?? 'light',
+      games: [
+        { name: 'Mega-Sena', hue: 158, draw: '3047 · 20/08', nums: ['04','18','22','26','31','58'],
+          status: 'Acumulou · próximo 23/08', prize: 'R$ 58.000.000,00' },
+        { name: 'Lotofácil', hue: 330, draw: '3768 · 21/08',
+          nums: ['02','03','04','05','06','07','10','11','12','14','15','17','20','23','24'],
+          status: 'Acumulou · próximo 23/08', prize: 'R$ 5.000.000,00' },
+        { name: 'Quina', hue: 276, draw: '7098 · 21/08', nums: ['04','17','21','38','47'],
+          status: '1 ganhador · 5 acertos', prize: 'R$ 16.049.664,67' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

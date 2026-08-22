@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Figtree:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #4b5563; } a:hover { color: #111827; }
+    .screen, .sheet { font-family: 'Google Sans', Figtree, Roboto, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .theme-light { --bg:#FAF9FC; --surface:#FFFFFF; --ink:#191A1F; --muted:#54535D; --line:#E4E2EA;
+      --aL:0.54; --aC:0.15; --sL:0.945; --sC:0.045; --kL:0.40; --kC:0.12;
+      --wL:0.982; --wC:0.016; --eL:0.905; --eC:0.038; --oL:0.99; --oC:0.005; }
+    .theme-dark { --bg:#0F1014; --surface:#18181E; --ink:#E8E5ED; --muted:#ACAAB6; --line:#2B2A33;
+      --aL:0.80; --aC:0.14; --sL:0.33; --sC:0.070; --kL:0.93; --kC:0.065;
+      --wL:0.225; --wC:0.026; --eL:0.345; --eC:0.048; --oL:0.20; --oC:0.045; }
+    .g { --accent: oklch(var(--aL) var(--aC) var(--h));
+         --soft:   oklch(var(--sL) var(--sC) var(--h));
+         --chipink:oklch(var(--kL) var(--kC) var(--h));
+         --wash:   oklch(var(--wL) var(--wC) var(--h));
+         --edge:   oklch(var(--eL) var(--eC) var(--h));
+         --onaccent: oklch(var(--oL) var(--oC) var(--h)); }
+    .tnum { font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+    .nums { display: flex; flex-wrap: wrap; gap: 7px; }
+    .num { font-variant-numeric: tabular-nums; font-weight: 500; font-size: 15px;
+           width: 34px; height: 34px; border-radius: 999px; background: var(--accent); color: var(--onaccent);
+           display: flex; align-items: center; justify-content: center; }
+  </style>
+</helmet>
+<div class="screen theme-{{theme}}" style="width: 390px; min-height: 844px; background: var(--bg); color: var(--ink); display: flex; flex-direction: column;">
+
+  <header style="display: flex; flex-direction: column; gap: 2px; padding: 6px 8px 14px;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+      </div>
+      <span class="tnum" style="font-size: 11px; color: var(--muted); padding-right: 10px;">atualizado 09:12</span>
+    </div>
+    <h1 style="margin: 0; padding: 0 10px; font-size: 27px; font-weight: 700; letter-spacing: -0.015em;">LotoLivre</h1>
+  </header>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 0 16px 24px;">
+    <sc-for list="{{games}}" as="game" hint-placeholder-count="4">
+      <article class="g" style="--h: {{game.hue}}; background: var(--wash); border: 1px solid var(--edge); border-radius: 16px; padding: 13px 14px 12px; display: flex; flex-direction: column; gap: 11px;">
+
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+          <h2 style="margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;">{{game.name}}</h2>
+          <span class="tnum" style="font-size: 11px; color: var(--muted); white-space: nowrap;">{{game.draw}}</span>
+        </div>
+
+        <sc-if value="{{game.isNumbers}}" hint-placeholder-val="{{true}}">
+          <div class="nums">
+            <sc-for list="{{game.nums}}" as="n" hint-placeholder-count="6"><span class="num">{{n}}</span></sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.isTwoDraws}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="font-size: 11px; color: var(--muted); width: 22px;">1º</span>
+              <div class="nums">
+                <sc-for list="{{game.nums}}" as="n" hint-placeholder-count="6"><span class="num">{{n}}</span></sc-for>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="font-size: 11px; color: var(--muted); width: 22px;">2º</span>
+              <div class="nums">
+                <sc-for list="{{game.nums2}}" as="n" hint-placeholder-count="6"><span class="num">{{n}}</span></sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.isClovers}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; gap: 9px; align-items: flex-start;">
+            <div class="nums">
+              <sc-for list="{{game.nums}}" as="n" hint-placeholder-count="6"><span class="num">{{n}}</span></sc-for>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; background: var(--soft); border-radius: 999px; padding: 5px 12px 5px 14px;">
+              <span style="font-size: 11px; font-weight: 500; color: var(--chipink);">Trevos</span>
+              <div style="display: flex; gap: 6px;">
+                <sc-for list="{{game.trevos}}" as="t" hint-placeholder-count="2">
+                  <span style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="position: absolute; inset: 0; color: var(--accent);"><circle cx="7.4" cy="7.4" r="6"></circle><circle cx="16.6" cy="7.4" r="6"></circle><circle cx="7.4" cy="16.6" r="6"></circle><circle cx="16.6" cy="16.6" r="6"></circle></svg>
+                    <span class="tnum" style="position: relative; font-size: 12px; font-weight: 500; color: var(--onaccent);">{{t}}</span>
+                  </span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.isColumns}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px;">
+            <sc-for list="{{game.columns}}" as="c" hint-placeholder-count="7">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                <span class="tnum" style="font-size: 9px; color: var(--muted);">{{c.col}}</span>
+                <span class="num" style="width: 100%; border-radius: 12px;">{{c.digit}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.isTickets}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px;">
+            <sc-for list="{{game.tickets}}" as="t" hint-placeholder-count="5">
+              <div style="display: flex; align-items: center; gap: 8px; background: var(--soft); border-radius: 999px; padding: 5px 12px;">
+                <span class="tnum" style="font-size: 10px; color: var(--muted);">{{t.rank}}</span>
+                <span class="tnum" style="font-size: 15px; font-weight: 500; color: var(--chipink);">{{t.number}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.isMatches}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 4px;">
+            <sc-for list="{{game.matches}}" as="m" hint-placeholder-count="14">
+              <span class="num" style="width: 100%; height: 28px; border-radius: 999px; font-size: 12px;">
+                <sc-if value="{{m.isDraw}}" hint-placeholder-val="{{false}}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if>
+                <sc-if value="{{m.isPlayed}}" hint-placeholder-val="{{true}}">{{m.mark}}</sc-if>
+              </span>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{game.hasToken}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; align-items: center; gap: 7px;">
+            <span style="font-size: 11px; color: var(--muted);">{{game.tokenLabel}}</span>
+            <span style="font-size: 13px; font-weight: 500; color: var(--chipink);">{{game.tokenValue}}</span>
+          </div>
+        </sc-if>
+
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-top: 1px solid var(--edge); padding-top: 10px;">
+          <span style="font-size: 12px; color: var(--muted);">{{game.status}}</span>
+          <span class="tnum" style="font-size: 17px; font-weight: 700; color: var(--accent); white-space: nowrap; letter-spacing: -0.01em;">{{game.prize}}</span>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"dark","section":"Tema"},"$preview":{"width":390,"height":2080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const games = [
+      { name: 'Mega-Sena', hue: 158, draw: '3047 · 20/08', isNumbers: true,
+        nums: ['04','18','22','26','31','58'],
+        status: 'Acumulou · próximo 23/08', prize: 'R$ 58.000.000,00' },
+      { name: 'Lotofácil', hue: 330, draw: '3768 · 21/08', isNumbers: true,
+        nums: ['02','03','04','05','06','07','10','11','12','14','15','17','20','23','24'],
+        status: 'Acumulou · próximo 23/08', prize: 'R$ 5.000.000,00' },
+      { name: 'Quina', hue: 276, draw: '7098 · 21/08', isNumbers: true,
+        nums: ['04','17','21','38','47'],
+        status: '1 ganhador · 5 acertos', prize: 'R$ 16.049.664,67' },
+      { name: 'Lotomania', hue: 55, draw: '2966 · 21/08', isNumbers: true,
+        nums: ['14','17','20','23','26','31','34','36','38','46','53','59','60','63','71','73','77','84','95','97'],
+        status: 'Acumulou · próximo 24/08', prize: 'R$ 17.500.000,00' },
+      { name: 'Dupla Sena', hue: 25, draw: '2999 · 21/08', isTwoDraws: true,
+        nums: ['01','10','12','37','39','44'], nums2: ['10','15','18','19','46','49'],
+        status: 'Acumulou · próximo 24/08', prize: 'R$ 2.000.000,00' },
+      { name: '+Milionária', hue: 300, draw: '382 · 19/08', isClovers: true,
+        nums: ['10','17','23','30','44','48'], trevos: ['4','6'],
+        status: 'Acumulou · próximo 23/08', prize: 'R$ 86.000.000,00' },
+      { name: 'Timemania', hue: 135, draw: '2431 · 20/08', isNumbers: true,
+        nums: ['18','22','55','58','63','65','72'],
+        hasToken: true, tokenLabel: 'Time do coração', tokenValue: 'Confiança/SE',
+        status: 'Acumulou · próximo 23/08', prize: 'R$ 9.500.000,00' },
+      { name: 'Dia de Sorte', hue: 78, draw: '1278 · 21/08', isNumbers: true,
+        nums: ['01','03','04','10','12','24','30'],
+        hasToken: true, tokenLabel: 'Mês da sorte', tokenValue: 'Junho',
+        status: 'Acumulou · próximo 23/08', prize: 'R$ 600.000,00' },
+      { name: 'Super Sete', hue: 110, draw: '889 · 21/08', isColumns: true,
+        columns: [1,2,3,4,5,6,7].map((col, i) => ({ col, digit: ['3','2','5','9','5','1','0'][i] })),
+        status: 'Acumulou · próximo 24/08', prize: 'R$ 6.200.000,00' },
+      { name: 'Loteca', hue: 205, draw: '1266 · 17/08', isMatches: true,
+        matches: ['1','2','1','1','X','X','X','X','1','2','X','2','1','2']
+          .map((mark) => ({ mark, isDraw: mark === 'X', isPlayed: mark !== 'X' })),
+        status: 'Acumulou · próximo 22/08', prize: 'R$ 1.200.000,00' },
+      { name: 'Federal', hue: 245, draw: '6093 · 19/08', isTickets: true,
+        tickets: [['1º','080574'],['2º','019932'],['3º','014112'],['4º','026366'],['5º','088482']]
+          .map(([rank, number]) => ({ rank, number })),
+        status: '1º prêmio', prize: 'R$ 500.000,00' },
+    ];
+    return { theme: this.props.theme ?? 'light', games };
+  }
+}
+</script>
+</body>
+</html>
