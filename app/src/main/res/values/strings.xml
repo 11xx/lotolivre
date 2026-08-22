@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">LotoLivre</string>
+
+    <string name="game_mega_sena">Mega-Sena</string>
+    <string name="game_lotofacil">Lotofácil</string>
+    <string name="game_quina">Quina</string>
+    <string name="game_lotomania">Lotomania</string>
+    <string name="game_dupla_sena">Dupla Sena</string>
+    <string name="game_mais_milionaria">+Milionária</string>
+    <string name="game_timemania">Timemania</string>
+    <string name="game_dia_de_sorte">Dia de Sorte</string>
+    <string name="game_super_sete">Super Sete</string>
+    <string name="game_loteca">Loteca</string>
+    <string name="game_federal">Federal</string>
+
+    <string name="label_heart_team">Time do coração</string>
+    <string name="label_lucky_month">Mês da sorte</string>
+    <string name="label_clovers">Trevos</string>
+    <string name="label_first_draw">1º</string>
+    <string name="label_second_draw">2º</string>
 </resources>
