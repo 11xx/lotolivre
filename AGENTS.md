@@ -82,7 +82,8 @@ the app costs a string change rather than a new store listing.
 
 - Keep composables dumb and state hoisted, with styling confined to the theme
   and a per-game colour map, so the visual design can be replaced without
-  touching data or navigation code.
+  touching data or navigation code. `design/` holds the artboards the screens
+  follow, and the decisions they encode.
 - Prefer OkHttp with kotlinx.serialization directly. Two endpoints do not earn
   a Retrofit interface.
 - Manual dependency wiring through a single container. No DI framework.
@@ -90,6 +91,12 @@ the app costs a string change rather than a new store listing.
   adding a future game should be one new branch.
 - Test the mapper against saved JSON fixtures for all eleven modalities. That
   mapping is where essentially all the correctness risk lives.
+- Responses are cached as raw JSON, keyed by modality and contest. Nothing is
+  ever invalidated, and the newest contest per game is recorded beside them.
+- Each game's colour is derived from one hue in OKLCH at a lightness and chroma
+  the theme fixes for every game, rather than eleven palettes maintained twice.
+- One type family, downloaded through the font provider rather than packaged,
+  with the platform sans as the fallback. Figures are tabular everywhere.
 
 ## License
 
