@@ -1,5 +1,6 @@
 package org.x11xx.loterias.ui.about
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +16,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import org.x11xx.loterias.R
 import org.x11xx.loterias.ui.icons.BackIcon
+import org.x11xx.loterias.ui.openRepository
 
 @Composable
 fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
@@ -54,7 +58,28 @@ fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             Section(R.string.about_trademarks_title, R.string.about_trademarks)
             Section(R.string.about_source_title, R.string.about_source)
             Section(R.string.about_license_title, R.string.about_license)
+            Repository()
         }
+    }
+}
+
+@Composable
+private fun Repository() {
+    val context = LocalContext.current
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = stringResource(R.string.about_repository_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.about_repository),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.clickable(
+                onClickLabel = stringResource(R.string.action_open_repository),
+            ) { context.openRepository() },
+        )
     }
 }
 

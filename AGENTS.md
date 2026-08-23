@@ -2,7 +2,8 @@
 
 Android app showing Brazilian federal lottery (Caixa) results. Results only —
 no bet generator, no statistics tab, no saved games, no ads, no tracking, no
-analytics. `INTERNET` is the only permission it should ever need.
+analytics. `INTERNET` is the only permission it needs today; sharing a result
+as a picture goes out through a FileProvider rather than storage access.
 
 Kotlin + Jetpack Compose + Material 3, single `:app` module, offline-first.
 
@@ -93,6 +94,11 @@ the app costs a string change rather than a new store listing.
   mapping is where essentially all the correctness risk lives.
 - Responses are cached as raw JSON, keyed by modality and contest. Nothing is
   ever invalidated, and the newest contest per game is recorded beside them.
+- A drawn result cannot change, so a request can only discover a contest drawn
+  since. A game whose next draw is still ahead is not asked about at all, and
+  no game is asked twice inside a minute however often the list is pulled.
+- A result shared as a picture is composed at a density of its own, so the
+  image does not vary with the screen that made it.
 - Each game's colour is derived from one hue in OKLCH at a lightness and chroma
   the theme fixes for every game, rather than eleven palettes maintained twice.
 - One type family, downloaded through the font provider rather than packaged,

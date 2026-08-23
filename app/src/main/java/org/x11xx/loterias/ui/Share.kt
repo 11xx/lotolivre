@@ -2,13 +2,14 @@ package org.x11xx.loterias.ui
 
 import android.content.Context
 import android.content.Intent
+import androidx.core.net.toUri
 import org.x11xx.loterias.R
 import org.x11xx.loterias.domain.Draw
 import org.x11xx.loterias.domain.LotteryResult
 
-/** A result as plain text, which is all a result is. */
-fun Context.shareResult(result: LotteryResult, summary: ResultSummary) {
-    val body = buildString {
+/** A result as plain text, which is all a result is underneath. */
+fun Context.resultAsText(result: LotteryResult, summary: ResultSummary): String =
+    buildString {
         appendLine(
             getString(
                 R.string.share_subject,
@@ -20,12 +21,6 @@ fun Context.shareResult(result: LotteryResult, summary: ResultSummary) {
         appendLine(drawAsText(result))
         append(summary.status).append(" — ").append(summary.prize)
     }
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, body)
-    }
-    startActivity(Intent.createChooser(intent, getString(R.string.action_share)))
-}
 
 private fun Context.drawAsText(result: LotteryResult): String {
     val drawn = when (val draw = result.draw) {
@@ -56,4 +51,10 @@ private fun Context.drawAsText(result: LotteryResult): String {
     } else {
         drawn
     }
+}
+
+/** Where the source lives, for anyone who wants to read or fork it. */
+fun Context.openRepository() {
+    val url = "https://" + getString(R.string.about_repository)
+    startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
 }

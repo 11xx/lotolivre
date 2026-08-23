@@ -12,6 +12,9 @@ private val fullDate = DateTimeFormatter.ofPattern("dd/MM/yyyy", BR)
 
 fun BigDecimal.asMoney(): String = NumberFormat.getCurrencyInstance(BR).format(this)
 
+/** Winner counts run to six figures, so they are grouped like any other number. */
+fun Int.asCount(): String = NumberFormat.getIntegerInstance(BR).format(this)
+
 fun LocalDate.asDayMonth(): String = format(dayMonth)
 
 fun LocalDate.asFullDate(): String = format(fullDate)

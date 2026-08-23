@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.DrawerValue
@@ -42,6 +43,8 @@ import org.x11xx.loterias.ui.detail.DetailScreen
 import org.x11xx.loterias.ui.icons.InfoIcon
 import org.x11xx.loterias.ui.icons.ListIcon
 import org.x11xx.loterias.ui.results.ResultsScreen
+import org.x11xx.loterias.ui.share.shareResultImage
+import org.x11xx.loterias.ui.theme.LocalDarkTheme
 import org.x11xx.loterias.ui.theme.LotoLivreTheme
 import org.x11xx.loterias.ui.theme.ThemeMode
 
@@ -60,6 +63,12 @@ fun LotoLivreApp(container: AppContainer) {
         val games by viewModel.games.collectAsStateWithLifecycle()
         val detail by viewModel.detail.collectAsStateWithLifecycle()
         val updatedAt by viewModel.updatedAt.collectAsStateWithLifecycle()
+        val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
+
+        // Hoisted above the screen switch, so returning from a game lands
+        // where the list was left rather than at the top.
+        val listState = rememberLazyListState()
+        val dark = LocalDarkTheme.current
 
         var screen by rememberSaveable { mutableStateOf(Screen.RESULTS.name) }
         var openGame by rememberSaveable { mutableStateOf<String?>(null) }
@@ -97,13 +106,16 @@ fun LotoLivreApp(container: AppContainer) {
                     Screen.RESULTS -> ResultsScreen(
                         games = games,
                         updatedAt = updatedAt,
+                        refreshing = refreshing,
+                        listState = listState,
                         onOpenMenu = { scope.launch { drawer.open() } },
                         onOpenGame = { modality ->
                             openGame = modality.slug
                             viewModel.open(modality)
                             show(Screen.DETAIL)
                         },
-                        onRetry = viewModel::refresh,
+                        onRefresh = { viewModel.refresh() },
+                        onRetry = { viewModel.refresh() },
                         modifier = Modifier.safeDrawingPadding(),
                     )
 
@@ -115,7 +127,15 @@ fun LotoLivreApp(container: AppContainer) {
                             .orEmpty(),
                         onBack = { show(Screen.RESULTS) },
                         onStep = viewModel::step,
-                        onShare = { context.shareResult(it, summaryOf(it, context)) },
+                        onShare = { result ->
+                            scope.launch {
+                                context.shareResultImage(
+                                    result = result,
+                                    summary = summaryOf(result, context),
+                                    dark = dark,
+                                )
+                            }
+                        },
                         modifier = Modifier.safeDrawingPadding(),
                     )
 

@@ -27,8 +27,8 @@
     <string name="status_first_prize">1º prêmio</string>
     <string name="status_next_draw">Próximo %1$s</string>
     <plurals name="status_winners">
-        <item quantity="one">%1$d ganhador · %2$s</item>
-        <item quantity="other">%1$d ganhadores · %2$s</item>
+        <item quantity="one">%1$s ganhador · %2$s</item>
+        <item quantity="other">%1$s ganhadores · %2$s</item>
     </plurals>
 
     <string name="menu_open">Abrir menu</string>
@@ -44,6 +44,7 @@
     <string name="action_next">Próximo</string>
     <string name="action_share">Compartilhar</string>
     <string name="action_retry">Tentar de novo</string>
+    <string name="action_open_repository">Abrir repositório</string>
 
     <string name="detail_tier">Faixa</string>
     <string name="detail_winners">Ganhadores</string>
@@ -57,16 +58,19 @@
     <string name="error_load">Não foi possível carregar</string>
     <string name="error_contest_missing">Concurso não encontrado</string>
 
+    <string name="share_disclaimer">Não é um aplicativo oficial da Caixa Econômica Federal</string>
     <string name="share_subject">%1$s · concurso %2$d</string>
 
     <string name="about_title">Sobre</string>
-    <string name="about_purpose">LotoLivre mostra os resultados das loterias federais brasileiras. Nada além disso: não gera jogos, não guarda apostas, não calcula estatísticas, não exibe anúncios e não coleta nenhum dado. A única permissão declarada é o acesso à internet.</string>
+    <string name="about_purpose">LotoLivre mostra os resultados das loterias federais brasileiras. Não exibe anúncios e não coleta nenhum dado.</string>
     <string name="about_not_official_title">Não é um aplicativo oficial</string>
     <string name="about_not_official">LotoLivre não é um aplicativo oficial da Caixa Econômica Federal, não é afiliado, patrocinado ou endossado por ela, e não tem qualquer ligação com a instituição. Este aplicativo nunca pede senha, dado bancário ou número de aposta.</string>
     <string name="about_trademarks_title">Marcas</string>
     <string name="about_trademarks">Mega-Sena, Lotofácil, Quina, Lotomania, Dupla Sena, +Milionária, Timemania, Dia de Sorte, Super Sete, Loteca e Federal são marcas da Caixa Econômica Federal, usadas aqui de forma descritiva apenas para nomear os resultados que rotulam. Todos os direitos sobre elas permanecem de seus respectivos titulares.</string>
     <string name="about_source_title">Origem dos dados</string>
     <string name="about_source">Os resultados são dados públicos, obtidos da API do portal de loterias da Caixa. Ficam guardados no aparelho depois de vistos, para abrirem sem rede.</string>
+    <string name="about_repository_title">Código-fonte</string>
+    <string name="about_repository">github.com/11xx/lotolivre</string>
     <string name="about_license_title">Licença</string>
-    <string name="about_license">Código em domínio público, sob a Unlicense.</string>
+    <string name="about_license">Código aberto em domínio público, sob a Unlicense.</string>
 </resources>

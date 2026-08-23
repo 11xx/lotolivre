@@ -25,7 +25,7 @@ fun summaryOf(result: LotteryResult, context: Context): ResultSummary {
             status = context.resources.getQuantityString(
                 R.plurals.status_winners,
                 top.winners,
-                top.winners,
+                top.winners.asCount(),
                 top.label,
             ),
             prize = top.prize.asMoney(),

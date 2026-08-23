@@ -35,9 +35,10 @@ fun DrawContent(
     colors: GameColors,
     ballSize: Dp,
     modifier: Modifier = Modifier,
+    centred: Boolean = false,
 ) {
     when (draw) {
-        is Draw.Numbers -> Balls(draw.numbers, colors, ballSize, modifier)
+        is Draw.Numbers -> Balls(draw.numbers, colors, ballSize, modifier, centred)
 
         is Draw.TwoDraws -> Column(
             modifier = modifier,
@@ -130,10 +131,20 @@ fun DrawContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun Balls(numbers: List<String>, colors: GameColors, size: Dp, modifier: Modifier = Modifier) {
+private fun Balls(
+    numbers: List<String>,
+    colors: GameColors,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    centred: Boolean = false,
+) {
     FlowRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(7.dp),
+        modifier = if (centred) modifier.fillMaxWidth() else modifier,
+        horizontalArrangement = if (centred) {
+            Arrangement.spacedBy(7.dp, Alignment.CenterHorizontally)
+        } else {
+            Arrangement.spacedBy(7.dp)
+        },
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         numbers.forEach { Ball(it, colors, size) }
