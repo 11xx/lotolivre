@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,9 @@ import org.x11xx.loterias.domain.LotteryResult
 import org.x11xx.loterias.ui.DetailState
 import org.x11xx.loterias.ui.asFullDate
 import org.x11xx.loterias.ui.contest.ContestBody
+import org.x11xx.loterias.ui.contest.ContestHeading
+import org.x11xx.loterias.ui.theme.LocalDarkTheme
+import org.x11xx.loterias.ui.theme.gameColors
 import org.x11xx.loterias.ui.icons.BackIcon
 import org.x11xx.loterias.ui.icons.ForwardIcon
 import org.x11xx.loterias.ui.icons.ShareIcon
@@ -58,11 +62,7 @@ fun DetailScreen(
             IconButton(onClick = onBack) {
                 Icon(BackIcon, contentDescription = stringResource(R.string.action_back))
             }
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f),
-            )
+            Spacer(modifier = Modifier.weight(1f))
             IconButton(
                 onClick = { loaded?.let { onShare(it.result) } },
                 enabled = loaded != null,
@@ -71,7 +71,7 @@ fun DetailScreen(
             }
         }
 
-        ContestStepper(state = state, onStep = onStep)
+        ContestStepper(state = state, title = title, onStep = onStep)
 
         when (state) {
             is DetailState.Loaded -> ContestBody(
@@ -90,14 +90,17 @@ fun DetailScreen(
 }
 
 @Composable
-private fun ContestStepper(state: DetailState, onStep: (Int) -> Unit) {
+private fun ContestStepper(state: DetailState, title: String, onStep: (Int) -> Unit) {
     val loaded = state as? DetailState.Loaded
+    val accent = loaded
+        ?.let { gameColors(it.result.modality.hue, LocalDarkTheme.current).accent }
+        ?: MaterialTheme.colorScheme.onSurface
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 14.dp),
+            .padding(start = 12.dp, end = 12.dp, top = 2.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         StepButton(
             label = stringResource(R.string.action_previous),
@@ -106,21 +109,13 @@ private fun ContestStepper(state: DetailState, onStep: (Int) -> Unit) {
             onClick = { onStep(-1) },
             iconFirst = true,
         )
-        Column(
+        ContestHeading(
+            title = title,
+            contest = loaded?.result?.contest,
+            date = loaded?.result?.date,
+            accent = accent,
             modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = loaded?.let { stringResource(R.string.contest_number, it.result.contest) }.orEmpty(),
-                style = MaterialTheme.typography.labelLarge,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = loaded?.result?.date?.asFullDate().orEmpty(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        )
         StepButton(
             label = stringResource(R.string.action_next),
             icon = ForwardIcon,
@@ -149,7 +144,7 @@ private fun StepButton(
                 RoundedCornerShape(12.dp),
             )
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 13.dp),
+            .padding(horizontal = 10.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,14 +43,17 @@ import org.x11xx.loterias.ui.theme.gameColors
 fun ContestBody(
     result: LotteryResult,
     modifier: Modifier = Modifier,
-    centredDezenas: Boolean = false,
 ) {
     val colors = gameColors(result.modality.hue, LocalDarkTheme.current)
+    // A short set of dezenas sits centred under a centred heading; the longer
+    // games fill the width anyway, where centring would only look arbitrary.
+    val draw = result.draw
+    val centredDezenas = draw is Draw.Numbers && draw.numbers.size <= 6
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        when (val draw = result.draw) {
+        when (draw) {
             is Draw.Matches -> MatchList(draw, colors)
             else -> Column(
                 modifier = Modifier
@@ -256,6 +260,8 @@ private fun TierRow(
             style = style,
             color = colour,
             textAlign = TextAlign.End,
+            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            maxLines = 1,
             modifier = Modifier.weight(0.75f),
         )
         Text(
@@ -263,6 +269,8 @@ private fun TierRow(
             style = style,
             color = accent ?: colour,
             textAlign = TextAlign.End,
+            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            maxLines = 1,
             modifier = Modifier.weight(1.1f),
         )
     }

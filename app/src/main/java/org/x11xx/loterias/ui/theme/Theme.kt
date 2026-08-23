@@ -23,6 +23,10 @@ private val LightScheme = lightColorScheme(
     outlineVariant = LightLine,
     primary = LightInk,
     onPrimary = LightSurface,
+    // Selection states are neutral too: the only colour in the app belongs to
+    // a game, and a stray tint from the default palette would read as one.
+    secondaryContainer = LightLine,
+    onSecondaryContainer = LightInk,
 )
 
 private val DarkScheme = darkColorScheme(
@@ -35,6 +39,8 @@ private val DarkScheme = darkColorScheme(
     outlineVariant = DarkLine,
     primary = DarkInk,
     onPrimary = DarkSurface,
+    secondaryContainer = DarkLine,
+    onSecondaryContainer = DarkInk,
 )
 
 @Composable
