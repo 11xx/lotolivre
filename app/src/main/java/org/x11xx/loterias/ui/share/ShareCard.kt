@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.x11xx.loterias.R
 import org.x11xx.loterias.domain.LotteryResult
 import org.x11xx.loterias.ui.contest.ContestBody
 import org.x11xx.loterias.ui.contest.ContestHeading
@@ -29,9 +26,6 @@ val ShareCardWidth = 400.dp
  * A contest as a picture: the same heading and blocks as the detail screen,
  * without the controls for walking between contests — nobody can press those
  * in an image.
- *
- * A picture travels away from the app that made it, carrying game names that
- * are Caixa's marks, so it states that it is not Caixa's app on its face.
  *
  * The Surface is load-bearing rather than decorative. Text that names no
  * colour of its own takes the one the surface around it provides, and outside
@@ -60,13 +54,6 @@ fun ShareCard(result: LotteryResult, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
             )
             ContestBody(result)
-            Text(
-                text = stringResource(R.string.share_disclaimer),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
     }
 }

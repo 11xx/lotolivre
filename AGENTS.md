@@ -70,6 +70,14 @@ in-app About screen state that plainly.
 Ship no Caixa logos or visual-identity assets. Game colours are fine. Never
 request credentials and never facilitate betting.
 
+The disclaimer belongs in the About screen and the store listing, and nowhere
+else. A shared picture deliberately carries none: the layout is the app's own
+work, the numbers in it are public record, and neither borrows anything that
+needs disclaiming. Stamping a legal notice on every result someone sends a
+friend would buy nothing and cost the picture. Note that an unused disclaimer
+string reads like an oversight to anyone reviewing lint, so there is none to
+find — the wording lives only where it is shown.
+
 Display names live in exactly one place, so changing or abbreviating any of
 them is a single edit. This is ordinary localisation hygiene rather than a
 precaution — the same seam serves translation, short labels in compact

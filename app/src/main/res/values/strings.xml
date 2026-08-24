@@ -58,7 +58,6 @@
     <string name="error_load">Não foi possível carregar</string>
     <string name="error_contest_missing">Concurso não encontrado</string>
 
-    <string name="share_disclaimer">Não é um aplicativo oficial da Caixa Econômica Federal</string>
     <string name="share_subject">%1$s · concurso %2$d</string>
 
     <string name="about_title">Sobre</string>
