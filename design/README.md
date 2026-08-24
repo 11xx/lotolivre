@@ -31,6 +31,11 @@ canvas and carries the notes explaining the decisions they encode.
 - **No bottom navigation.** Two destinations do not earn a bar; the drawer holds
   Resultados, Sobre and the theme choice.
 
+## Logo
+
+`logo/` holds the mark and the geometry it is built from, along with the two
+places the app draws it.
+
 ## Rendering them
 
 The artboards open as a pan-and-zoom canvas when seeded into the Claude Design

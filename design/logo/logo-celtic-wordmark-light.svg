@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%">
+  <!-- LotoLivre Full Horizontal Brand Logo — Light Mode -->
+  <rect width="800" height="240" rx="28" fill="#F2F5F0"/>
+
+  <!-- Left: Celtic Ring Knot Symbol -->
+  <g transform="translate(130, 120) scale(0.68)">
+    <g transform="translate(0, -78)">
+      <path d="M 0,-70 A 70,70 0 1,0 0,70 A 70,70 0 1,0 0,-70 Z M 0,-36 A 36,36 0 1,1 0,36 A 36,36 0 1,1 0,-36 Z" fill="#347C5A" fill-rule="evenodd"/>
+      <circle cx="0" cy="0" r="53" fill="none" stroke="#95D5B2" stroke-width="2.5" opacity="0.6"/>
+      <text x="0" y="10" font-family="monospace, 'Roboto Mono', sans-serif" font-size="28" font-weight="900" fill="#0F291E" text-anchor="middle">10</text>
+    </g>
+    <g transform="translate(78, 0)">
+      <path d="M -70,0 A 70,70 0 0,1 -20,-60" fill="none" stroke="#F2F5F0" stroke-width="8"/>
+      <path d="M 0,-70 A 70,70 0 1,0 0,70 A 70,70 0 1,0 0,-70 Z M 0,-36 A 36,36 0 1,1 0,36 A 36,36 0 1,1 0,-36 Z" fill="#2D6A4F" fill-rule="evenodd"/>
+      <circle cx="0" cy="0" r="53" fill="none" stroke="#74C69D" stroke-width="2.5" opacity="0.6"/>
+      <text x="0" y="10" font-family="monospace, 'Roboto Mono', sans-serif" font-size="28" font-weight="900" fill="#0F291E" text-anchor="middle">11</text>
+    </g>
+    <g transform="translate(0, 78)">
+      <path d="M 0,-70 A 70,70 0 0,1 60,-20" fill="none" stroke="#F2F5F0" stroke-width="8"/>
+      <path d="M 0,-70 A 70,70 0 1,0 0,70 A 70,70 0 1,0 0,-70 Z M 0,-36 A 36,36 0 1,1 0,36 A 36,36 0 1,1 0,-36 Z" fill="#1B4332" fill-rule="evenodd"/>
+      <circle cx="0" cy="0" r="53" fill="none" stroke="#2D6A4F" stroke-width="2.5" opacity="0.6"/>
+      <text x="0" y="10" font-family="monospace, 'Roboto Mono', sans-serif" font-size="28" font-weight="900" fill="#0F291E" text-anchor="middle">46</text>
+    </g>
+    <g transform="translate(-78, 0)">
+      <path d="M 0,70 A 70,70 0 0,1 20,60" fill="none" stroke="#F2F5F0" stroke-width="8"/>
+      <path d="M 70,0 A 70,70 0 0,1 20,-60" fill="none" stroke="#F2F5F0" stroke-width="8"/>
+      <path d="M 0,-70 A 70,70 0 1,0 0,70 A 70,70 0 1,0 0,-70 Z M 0,-36 A 36,36 0 1,1 0,36 A 36,36 0 1,1 0,-36 Z" fill="#235840" fill-rule="evenodd"/>
+      <circle cx="0" cy="0" r="53" fill="none" stroke="#52B788" stroke-width="2.5" opacity="0.6"/>
+      <text x="0" y="10" font-family="monospace, 'Roboto Mono', sans-serif" font-size="28" font-weight="900" fill="#0F291E" text-anchor="middle">33</text>
+    </g>
+    <circle cx="0" cy="0" r="22" fill="#F2F5F0"/>
+    <path d="M 0 -16 Q 0 0 16 0 Q 0 0 0 16 Q 0 0 -16 0 Q 0 0 0 -16 Z" fill="#D4AF37"/>
+  </g>
+
+  <!-- Right: LotoLivre Wordmark & Tagline -->
+  <g transform="translate(265, 115)">
+    <text x="0" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="58" font-weight="900" fill="#17201B" letter-spacing="-1">Loto<tspan fill="#2D6A4F">Livre</tspan></text>
+    <text x="4" y="52" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#5E6E65" letter-spacing="3">RESULTADOS DE LOTERIA</text>
+  </g>
+</svg>

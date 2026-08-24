@@ -3,6 +3,7 @@ package org.x11xx.loterias.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -45,6 +47,7 @@ import org.x11xx.loterias.ui.icons.ListIcon
 import org.x11xx.loterias.ui.results.ResultsScreen
 import org.x11xx.loterias.ui.share.shareResultImage
 import org.x11xx.loterias.ui.theme.LocalDarkTheme
+import org.x11xx.loterias.ui.theme.LotoLivreLogo
 import org.x11xx.loterias.ui.theme.LotoLivreTheme
 import org.x11xx.loterias.ui.theme.ThemeMode
 
@@ -166,11 +169,17 @@ private fun DrawerSheet(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 22.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.titleLarge,
+            Row(
                 modifier = Modifier.padding(horizontal = 10.dp),
-            )
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LotoLivreLogo(size = 30.dp, dark = LocalDarkTheme.current)
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 NavigationDrawerItem(

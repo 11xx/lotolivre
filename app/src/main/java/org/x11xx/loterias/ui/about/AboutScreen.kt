@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import org.x11xx.loterias.R
 import org.x11xx.loterias.ui.icons.BackIcon
 import org.x11xx.loterias.ui.openRepository
+import org.x11xx.loterias.ui.theme.LocalDarkTheme
+import org.x11xx.loterias.ui.theme.LotoLivreLogo
 
 @Composable
 fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
@@ -50,6 +52,7 @@ fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
+            Identity()
             Text(
                 text = stringResource(R.string.about_purpose),
                 style = MaterialTheme.typography.bodyLarge,
@@ -60,6 +63,25 @@ fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
             Section(R.string.about_license_title, R.string.about_license)
             Repository()
         }
+    }
+}
+
+@Composable
+private fun Identity() {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        LotoLivreLogo(
+            size = 64.dp,
+            dark = LocalDarkTheme.current,
+            contentDescription = stringResource(R.string.app_name),
+        )
+        Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.displaySmall,
+        )
     }
 }
 
