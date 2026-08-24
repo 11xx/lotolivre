@@ -5,9 +5,10 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- The canvas the mark is drawn against, dark in either system theme so
-         the sage numerals and the gold star keep one contrast everywhere. -->
+    <!-- The canvas the mark is drawn against, following the system theme. The
+         rings hold their contrast against either, and the holes are
+         transparent, so the canvas is also what shows through them. -->
     <path
-        android:fillColor="#0B0F0D"
+        android:fillColor="@color/logo_canvas"
         android:pathData="M0,0h108v108h-108z" />
 </vector>

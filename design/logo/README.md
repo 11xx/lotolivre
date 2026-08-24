@@ -36,7 +36,9 @@ negative space without anything cut away for it.
 - **Launcher icon** — `app/src/main/res/drawable/ic_launcher_*.xml`. The
   numerals, the notches and the inlay strokes fall under a pixel at launcher
   sizes, so the adaptive icon carries the rings, the holes and the star alone,
-  scaled to span the 66dp safe zone.
+  scaled to span the 66dp safe zone. Its canvas follows the system theme
+  through `@color/logo_canvas`; the rings are the same either way, which is
+  true of the masters too.
 - **In app** — `LotoLivreLogo`, which draws the mark in full, numerals
   included, on its own canvas rather than the surface behind it.
 
