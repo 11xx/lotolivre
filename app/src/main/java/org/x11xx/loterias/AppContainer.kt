@@ -1,6 +1,7 @@
 package org.x11xx.loterias
 
 import android.content.Context
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,7 +38,7 @@ class ThemePreference(context: Context) {
     val mode: StateFlow<ThemeMode> = state.asStateFlow()
 
     fun set(mode: ThemeMode) {
-        store.edit().putString(KEY, mode.name).apply()
+        store.edit { putString(KEY, mode.name) }
         state.value = mode
     }
 
