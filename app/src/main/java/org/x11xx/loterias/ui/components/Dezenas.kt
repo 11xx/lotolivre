@@ -22,6 +22,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -113,20 +116,35 @@ fun CloverToken(
                 val radius = this.size.minDimension * 0.25f
                 val offset = this.size.minDimension * 0.19f
                 val centre = Offset(this.size.width / 2f, this.size.height / 2f)
-                listOf(
-                    Offset(centre.x - offset, centre.y - offset),
-                    Offset(centre.x + offset, centre.y - offset),
-                    Offset(centre.x - offset, centre.y + offset),
-                    Offset(centre.x + offset, centre.y + offset),
-                ).forEach { drawCircle(colors.accent, radius, it) }
+                val clover = Path().apply {
+                    listOf(
+                        Offset(centre.x - offset, centre.y - offset),
+                        Offset(centre.x + offset, centre.y - offset),
+                        Offset(centre.x - offset, centre.y + offset),
+                        Offset(centre.x + offset, centre.y + offset),
+                    ).forEach { addOval(Rect(it, radius)) }
+                    // Each disc overlaps its two neighbours but none reaches the
+                    // point all four surround, so the square spanning their
+                    // centres closes the pinhole that would otherwise sit there.
+                    addRect(
+                        Rect(
+                            left = centre.x - offset,
+                            top = centre.y - offset,
+                            right = centre.x + offset,
+                            bottom = centre.y + offset,
+                        ),
+                    )
+                }
+                drawPath(clover, colors.accent)
             },
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,
             color = colors.onAccent,
+            fontSize = (size.value * 0.44f).sp,
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelLarge,
-            fontSize = 12.sp,
         )
     }
 }
