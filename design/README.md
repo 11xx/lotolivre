@@ -20,6 +20,8 @@ canvas and carries the notes explaining the decisions they encode.
 - **Card height follows what the game draws, never the prize.** Quina shows
   five, Lotomania twenty, Federal five ticket numbers, Loteca fourteen match
   results. Sizing by prize would make the list reflow week to week.
+- **A total of nothing is left out.** An accumulation, estimate or revenue of
+  zero says nothing, so its row is not shown; Federal has none of the three.
 - **The game's colour is one hue** used at a fixed lightness and chroma for the
   balls, the prize value and a wash behind the card, computed per theme rather
   than stored twice.
