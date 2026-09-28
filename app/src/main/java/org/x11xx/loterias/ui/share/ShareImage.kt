@@ -5,6 +5,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.view.ViewGroup
+import android.widget.ScrollView
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
@@ -64,8 +65,6 @@ private suspend fun renderShareImage(
     val host = activity.findViewById<ViewGroup>(android.R.id.content)
     val view = ComposeView(activity).apply {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-        // Laid out and drawn like any other view, just never over the screen.
-        translationX = -100_000f
         setContent {
             CompositionLocalProvider(LocalDensity provides ShareDensity) {
                 LotoLivreTheme(if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
@@ -75,13 +74,20 @@ private suspend fun renderShareImage(
         }
     }
 
-    host.addView(view, ViewGroup.LayoutParams(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT))
+    // Laid out and drawn like any other view, just never over the screen. A
+    // scroll container measures its child without a height limit, so a tall
+    // result comes out whole rather than cut at the height of the screen.
+    val frame = ScrollView(activity).apply {
+        translationX = -100_000f
+        addView(view, ViewGroup.LayoutParams(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT))
+    }
+    host.addView(frame, ViewGroup.LayoutParams(widthPx, ViewGroup.LayoutParams.MATCH_PARENT))
     try {
         while (view.width == 0 || view.height == 0) awaitFrame()
         awaitFrame()
         return view.drawToBitmap()
     } finally {
-        host.removeView(view)
+        host.removeView(frame)
     }
 }
 
