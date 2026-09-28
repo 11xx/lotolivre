@@ -1,15 +1,17 @@
 [versions]
-agp = "9.3.1"
-coreKtx = "1.19.0"
+agp = "9.4.1"
+coreKtx = "1.19.1"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycle = "2.11.0"
 activityCompose = "1.13.0"
-kotlin = "2.2.10"
-composeBom = "2026.02.01"
+kotlin = "2.4.20"
+composeBom = "2026.09.00"
 okhttp = "5.5.0"
 kotlinxSerialization = "1.11.0"
+# The coroutines the app resolves through AndroidX, not the newest release:
+# the test library has to match what the app actually runs.
 kotlinxCoroutines = "1.9.0"
 
 [libraries]
