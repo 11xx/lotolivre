@@ -31,7 +31,8 @@ canvas and carries the notes explaining the decisions they encode.
   from their labels, and on a cramped one the contest steppers fold to their
   arrows before the heading between them loses its date.
 - **A total of nothing is left out.** An accumulation, estimate or revenue of
-  zero says nothing, so its row is not shown; Federal has none of the three.
+  zero says nothing, so no amount is shown for it; Federal has none of the
+  three. The next contest's number and date are not totals and stay.
 - **The game's colour is one hue** used at a fixed lightness and chroma for the
   balls, the prize value and a wash behind the card, computed per theme rather
   than stored twice.

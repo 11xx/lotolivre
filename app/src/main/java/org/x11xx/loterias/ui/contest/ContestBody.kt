@@ -105,11 +105,13 @@ fun ContestBody(
 
         // A total of nothing says nothing: Federal reports no accumulation,
         // estimate or revenue, and a jackpot won leaves nothing accumulated,
-        // which the top tier already shows.
+        // which the top tier already shows. The next contest's number and date
+        // are not totals, so they stay without an amount beside them.
         val next = result.next
         val accumulated = result.accumulatedPrize.takeIf { it.signum() > 0 }
         val estimate = next?.estimatedPrize?.takeIf { it.signum() > 0 }
-        if (next != null && (accumulated != null || estimate != null)) {
+        val upcoming = next?.takeIf { estimate != null || it.contest != null || it.date != null }
+        if (accumulated != null || upcoming != null) {
             ContestCard {
                 Column(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 15.dp),
@@ -132,10 +134,10 @@ fun ContestBody(
                             )
                         }
                     }
-                    if (accumulated != null && estimate != null) {
+                    if (accumulated != null && upcoming != null) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     }
-                    if (estimate != null) {
+                    if (upcoming != null) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -143,13 +145,18 @@ fun ContestBody(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = next.contest
-                                        ?.let { stringResource(R.string.detail_estimate, it) }
-                                        ?: stringResource(R.string.detail_estimate_plain),
+                                    text = when {
+                                        estimate == null -> upcoming.contest
+                                            ?.let { stringResource(R.string.detail_next_contest, it) }
+                                            ?: stringResource(R.string.detail_next_contest_plain)
+                                        else -> upcoming.contest
+                                            ?.let { stringResource(R.string.detail_estimate, it) }
+                                            ?: stringResource(R.string.detail_estimate_plain)
+                                    },
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
-                                next.date?.let {
+                                upcoming.date?.let {
                                     Text(
                                         text = it.asFullDate(),
                                         style = MaterialTheme.typography.labelSmall,
@@ -157,12 +164,14 @@ fun ContestBody(
                                     )
                                 }
                             }
-                            Text(
-                                text = estimate.asMoney(),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = colors.accent,
-                                fontSize = 20.sp,
-                            )
+                            if (estimate != null) {
+                                Text(
+                                    text = estimate.asMoney(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = colors.accent,
+                                    fontSize = 20.sp,
+                                )
+                            }
                         }
                     }
                 }
