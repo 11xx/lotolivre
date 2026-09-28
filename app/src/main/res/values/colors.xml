@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The mark's own canvas, and the window the app opens onto before the
-         first frame. Both are duplicated in values-night. -->
+    <!-- The mark's canvas, guide ring and numerals, and the window the app
+         opens onto before the first frame. All are duplicated in values-night. -->
     <color name="logo_canvas">#F2F5F0</color>
+    <color name="logo_guide">#D1DDD5</color>
+    <color name="logo_ink">#0F291E</color>
     <color name="window_background">#FAF9FC</color>
 </resources>

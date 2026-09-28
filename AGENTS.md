@@ -113,10 +113,11 @@ the app costs a string change rather than a new store listing.
   the theme fixes for every game, rather than eleven palettes maintained twice.
 - One type family, downloaded through the font provider rather than packaged,
   with the platform sans as the fallback. Figures are tabular everywhere.
-- The mark is one geometry drawn twice: an adaptive launcher icon that carries
-  only what survives at launcher sizes, and a Compose logo that draws it in
-  full on its own canvas. `design/logo/` holds the masters and the measures.
-  It borrows nothing from Caixa's visual identity.
+- The mark is one geometry drawn twice, in full both times: an adaptive
+  launcher icon, whose numerals are outlines of the app's typeface, and a
+  Compose logo on its own canvas. `design/logo/` holds the masters, the
+  measures and the script that outlines the numerals. It borrows nothing from
+  Caixa's visual identity.
 
 ## License
 
