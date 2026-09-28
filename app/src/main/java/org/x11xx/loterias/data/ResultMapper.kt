@@ -30,13 +30,7 @@ object ResultMapper {
             collected = dto.valorArrecadado,
             tiers = dto.listaRateioPremio
                 .sortedBy { it.faixa }
-                .mapIndexed { index, tier ->
-                    PrizeTier(
-                        tierLabel(modality, tier, index, dto.listaRateioPremio.size),
-                        tier.numeroDeGanhadores,
-                        tier.valorPremio,
-                    )
-                },
+                .map { PrizeTier(tierLabel(modality, it), it.numeroDeGanhadores, it.valorPremio) },
             next = nextContestOf(dto),
             extra = sanitizeToken(dto.nomeTimeCoracaoMesSorte),
         )
@@ -46,17 +40,20 @@ object ResultMapper {
      * The portal's own description of a tier, with two exceptions. Federal's
      * ranked prizes come described as "1 acertos", "2 acertos", as if they were
      * hit counts, so they are named by the rank of the ticket they pay. Dupla
-     * Sena's two draws come described alike, first draw's tiers then second's,
-     * so each is marked with its draw the way its row of dezenas is.
+     * Sena's two draws come described alike, so each tier is marked with its
+     * draw the way its row of dezenas is: each draw pays four tiers, numbered
+     * one to four for the first and five to eight for the second.
      */
-    private fun tierLabel(modality: Modality, tier: RateioDto, index: Int, count: Int): String {
+    private fun tierLabel(modality: Modality, tier: RateioDto): String {
         val description = tier.descricaoFaixa.trim()
         return when (modality) {
             Modality.FEDERAL -> "${tier.faixa}º prêmio"
-            Modality.DUPLA_SENA -> "${if (index < count / 2) 1 else 2}º · $description"
+            Modality.DUPLA_SENA -> "${if (tier.faixa <= DUPLA_SENA_TIERS_PER_DRAW) 1 else 2}º · $description"
             else -> description
         }
     }
+
+    private const val DUPLA_SENA_TIERS_PER_DRAW = 4
 
     private fun drawOf(modality: Modality, dto: ResultadoDto, numbers: List<String>): Draw =
         when (modality) {
