@@ -17,10 +17,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,12 +45,15 @@ import org.x11xx.loterias.ui.icons.BackIcon
 import org.x11xx.loterias.ui.icons.ForwardIcon
 import org.x11xx.loterias.ui.icons.ShareIcon
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     state: DetailState,
     title: String,
+    refreshing: Boolean,
     onBack: () -> Unit,
     onStep: (Int) -> Unit,
+    onRefresh: () -> Unit,
     onShare: (LotteryResult) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -73,18 +79,31 @@ fun DetailScreen(
 
         ContestStepper(state = state, title = title, onStep = onStep)
 
-        when (state) {
-            is DetailState.Loaded -> ContestBody(
-                result = state.result,
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            )
-            DetailState.Loading -> Centred { CircularProgressIndicator(strokeWidth = 2.dp) }
-            DetailState.NotFound -> Centred {
-                Message(stringResource(R.string.error_contest_missing))
+        // A page waiting on its first contest already shows a spinner of its own.
+        PullToRefreshBox(
+            isRefreshing = refreshing && loaded != null,
+            onRefresh = onRefresh,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            when (state) {
+                is DetailState.Loaded -> ContestBody(
+                    result = state.result,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                )
+                DetailState.Loading -> Centred { CircularProgressIndicator(strokeWidth = 2.dp) }
+                DetailState.NotFound -> Centred {
+                    Message(stringResource(R.string.error_contest_missing))
+                }
+                DetailState.Failed -> Centred {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Message(stringResource(R.string.error_load))
+                        TextButton(onClick = onRefresh) { Text(stringResource(R.string.action_retry)) }
+                    }
+                }
             }
-            DetailState.Failed -> Centred { Message(stringResource(R.string.error_load)) }
         }
     }
 }

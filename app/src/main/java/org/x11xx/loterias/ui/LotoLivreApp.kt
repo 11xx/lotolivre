@@ -32,14 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
 import org.x11xx.loterias.AppContainer
 import org.x11xx.loterias.R
-import org.x11xx.loterias.domain.Modality
 import org.x11xx.loterias.ui.about.AboutScreen
 import org.x11xx.loterias.ui.detail.DetailScreen
 import org.x11xx.loterias.ui.icons.InfoIcon
@@ -60,34 +62,40 @@ fun LotoLivreApp(container: AppContainer) {
     LotoLivreTheme(themeMode) {
         val viewModel: ResultsViewModel = viewModel(
             factory = viewModelFactory {
-                initializer { ResultsViewModel(container.repository) }
+                initializer { ResultsViewModel(container.repository, createSavedStateHandle()) }
             },
         )
         val games by viewModel.games.collectAsStateWithLifecycle()
         val detail by viewModel.detail.collectAsStateWithLifecycle()
+        val openGame by viewModel.openGame.collectAsStateWithLifecycle()
         val updatedAt by viewModel.updatedAt.collectAsStateWithLifecycle()
         val refreshing by viewModel.refreshing.collectAsStateWithLifecycle()
+
+        LifecycleEventEffect(Lifecycle.Event.ON_START) { viewModel.refreshIfStale() }
 
         // Hoisted above the screen switch, so returning from a game lands
         // where the list was left rather than at the top.
         val listState = rememberLazyListState()
         val dark = LocalDarkTheme.current
 
-        var screen by rememberSaveable { mutableStateOf(Screen.RESULTS.name) }
-        var openGame by rememberSaveable { mutableStateOf<String?>(null) }
+        // A game's page is open exactly while the view model has a game on it,
+        // so the two cannot disagree when the process is recreated.
+        var section by rememberSaveable { mutableStateOf(Screen.RESULTS.name) }
+        val screen = if (openGame != null) Screen.DETAIL else Screen.valueOf(section)
         val drawer = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
         fun show(next: Screen) {
-            screen = next.name
+            viewModel.close()
+            section = next.name
         }
 
         ModalNavigationDrawer(
             drawerState = drawer,
             drawerContent = {
                 DrawerSheet(
-                    current = Screen.valueOf(screen),
+                    current = screen,
                     themeMode = themeMode,
                     onThemeMode = container.themePreference::set,
                     onResults = {
@@ -105,18 +113,14 @@ fun LotoLivreApp(container: AppContainer) {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background,
             ) {
-                when (Screen.valueOf(screen)) {
+                when (screen) {
                     Screen.RESULTS -> ResultsScreen(
                         games = games,
                         updatedAt = updatedAt,
-                        refreshing = refreshing,
+                        refreshing = refreshing.isNotEmpty(),
                         listState = listState,
                         onOpenMenu = { scope.launch { drawer.open() } },
-                        onOpenGame = { modality ->
-                            openGame = modality.slug
-                            viewModel.open(modality)
-                            show(Screen.DETAIL)
-                        },
+                        onOpenGame = viewModel::open,
                         onRefresh = { viewModel.refresh() },
                         onRetry = { viewModel.refresh() },
                         modifier = Modifier.safeDrawingPadding(),
@@ -124,12 +128,11 @@ fun LotoLivreApp(container: AppContainer) {
 
                     Screen.DETAIL -> DetailScreen(
                         state = detail,
-                        title = openGame
-                            ?.let { Modality.ofSlug(it) }
-                            ?.let { stringResource(it.labelRes) }
-                            .orEmpty(),
+                        title = openGame?.let { stringResource(it.labelRes) }.orEmpty(),
+                        refreshing = openGame in refreshing,
                         onBack = { show(Screen.RESULTS) },
                         onStep = viewModel::step,
+                        onRefresh = viewModel::refreshDetail,
                         onShare = { result ->
                             scope.launch {
                                 context.shareResultImage(
@@ -150,7 +153,7 @@ fun LotoLivreApp(container: AppContainer) {
             }
         }
 
-        BackHandler(enabled = Screen.valueOf(screen) != Screen.RESULTS) {
+        BackHandler(enabled = screen != Screen.RESULTS) {
             show(Screen.RESULTS)
         }
     }
