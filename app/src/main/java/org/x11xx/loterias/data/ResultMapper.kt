@@ -30,10 +30,32 @@ object ResultMapper {
             collected = dto.valorArrecadado,
             tiers = dto.listaRateioPremio
                 .sortedBy { it.faixa }
-                .map { PrizeTier(it.descricaoFaixa.trim(), it.numeroDeGanhadores, it.valorPremio) },
+                .mapIndexed { index, tier ->
+                    PrizeTier(
+                        tierLabel(modality, tier, index, dto.listaRateioPremio.size),
+                        tier.numeroDeGanhadores,
+                        tier.valorPremio,
+                    )
+                },
             next = nextContestOf(dto),
             extra = sanitizeToken(dto.nomeTimeCoracaoMesSorte),
         )
+    }
+
+    /**
+     * The portal's own description of a tier, with two exceptions. Federal's
+     * ranked prizes come described as "1 acertos", "2 acertos", as if they were
+     * hit counts, so they are named by the rank of the ticket they pay. Dupla
+     * Sena's two draws come described alike, first draw's tiers then second's,
+     * so each is marked with its draw the way its row of dezenas is.
+     */
+    private fun tierLabel(modality: Modality, tier: RateioDto, index: Int, count: Int): String {
+        val description = tier.descricaoFaixa.trim()
+        return when (modality) {
+            Modality.FEDERAL -> "${tier.faixa}º prêmio"
+            Modality.DUPLA_SENA -> "${if (index < count / 2) 1 else 2}º · $description"
+            else -> description
+        }
     }
 
     private fun drawOf(modality: Modality, dto: ResultadoDto, numbers: List<String>): Draw =
