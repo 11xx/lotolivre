@@ -1,8 +1,10 @@
 package org.x11xx.loterias.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +34,17 @@ sealed interface DetailState {
     data object Failed : DetailState
 }
 
+/**
+ * The list of games and the one game page.
+ *
+ * The page asks either for one contest or for its game's newest, and that
+ * request lives in [SavedStateHandle]: a process reclaimed in the background
+ * reopens on the same page and loads it again. A page on the newest follows it,
+ * so a draw published while the page is open replaces what it shows.
+ */
 class ResultsViewModel(
     private val repository: ResultsRepository,
+    private val saved: SavedStateHandle,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val policy: RefreshPolicy = RefreshPolicy(clock),
 ) : ViewModel() {
@@ -46,19 +57,28 @@ class ResultsViewModel(
     private val _updatedAt = MutableStateFlow<LocalTime?>(null)
     val updatedAt: StateFlow<LocalTime?> = _updatedAt.asStateFlow()
 
-    private val _refreshing = MutableStateFlow(false)
-    val refreshing: StateFlow<Boolean> = _refreshing.asStateFlow()
+    private val _refreshing = MutableStateFlow(emptySet<Modality>())
+
+    /** The games whose newest contest is being asked of the portal right now. */
+    val refreshing: StateFlow<Set<Modality>> = _refreshing.asStateFlow()
+
+    private val _openGame = MutableStateFlow(saved.get<String>(OPEN_GAME)?.let(Modality::ofSlug))
+
+    /** The game on the detail page, or null while no page is open. */
+    val openGame: StateFlow<Modality?> = _openGame.asStateFlow()
 
     private val _detail = MutableStateFlow<DetailState>(DetailState.Loading)
     val detail: StateFlow<DetailState> = _detail.asStateFlow()
 
-    private val newestContest = mutableMapOf<Modality, Int>()
     private val lastFetched = mutableMapOf<Modality, Instant>()
+    private var lastChecked: Instant? = null
+    private var pageLoad: Job? = null
 
     /** Keeps a refresh from opening eleven connections at once. */
     private val inFlight = Semaphore(permits = 4)
 
     init {
+        _openGame.value?.let { load(it, saved.get<Int>(OPEN_CONTEST)) }
         refresh(userAsked = false)
     }
 
@@ -67,100 +87,145 @@ class ResultsViewModel(
      * [RefreshPolicy] says an answer could differ from it.
      */
     fun refresh(userAsked: Boolean = true) {
-        if (_refreshing.value) return
-        viewModelScope.launch {
-            _refreshing.value = true
-            try {
-                coroutineScope {
-                    Modality.entries.forEach { modality ->
-                        launch { refresh(modality, userAsked) }
-                    }
-                }
-            } finally {
-                _refreshing.value = false
-            }
+        lastChecked = clock.instant()
+        Modality.entries.forEach { modality ->
+            viewModelScope.launch { refresh(modality, userAsked) }
         }
     }
 
-    private suspend fun refresh(modality: Modality, userAsked: Boolean) {
-        val cached = runCatching { repository.cachedLatest(modality) }.getOrNull()
-        cached?.let { publish(modality, it) }
+    /** The automatic check again, once [RefreshPolicy] finds the last one stale. */
+    fun refreshIfStale() {
+        if (policy.isStale(lastChecked)) refresh(userAsked = false)
+    }
 
+    private suspend fun refresh(modality: Modality, userAsked: Boolean) {
+        val known = newest(modality)
+            ?: runCatching { repository.cachedLatest(modality) }.getOrNull()
+                ?.also { publish(modality, it) }
+
+        if (modality in _refreshing.value) return
         val allowed = policy.shouldFetch(
             lastFetched = lastFetched[modality],
-            nextDraw = cached?.next?.date,
+            nextDraw = known?.next?.date,
             userAsked = userAsked,
-            hasCachedResult = cached != null,
+            hasCachedResult = known != null,
         )
         if (!allowed) return
 
-        inFlight.withPermit {
-            runCatching { repository.refreshLatest(modality) }
-                .onSuccess {
-                    lastFetched[modality] = clock.instant()
-                    publish(modality, it)
-                    _updatedAt.value = LocalTime.now(clock)
-                }
-                .onFailure {
-                    _games.update { states ->
-                        if (states[modality] is GameState.Loaded) states
-                        else states + (modality to GameState.Failed)
+        _refreshing.update { it + modality }
+        try {
+            inFlight.withPermit {
+                runCatching { repository.refreshLatest(modality) }
+                    .onSuccess {
+                        lastFetched[modality] = clock.instant()
+                        publish(modality, it)
+                        _updatedAt.value = LocalTime.now(clock)
                     }
-                }
+                    .onFailure {
+                        _games.update { states ->
+                            if (states[modality] is GameState.Loaded) states
+                            else states + (modality to GameState.Failed)
+                        }
+                        if (followsNewest(modality) && _detail.value == DetailState.Loading) {
+                            _detail.value = DetailState.Failed
+                        }
+                    }
+            }
+        } finally {
+            _refreshing.update { it - modality }
         }
     }
 
     fun open(modality: Modality) {
-        when (val state = _games.value[modality]) {
-            is GameState.Loaded -> _detail.value = DetailState.Loaded(
-                state.result,
-                hasNext = hasNext(state.result),
-            )
-            else -> {
-                _detail.value = DetailState.Loading
-                viewModelScope.launch { load(modality) { repository.refreshLatest(modality) } }
-            }
-        }
+        saved[OPEN_GAME] = modality.slug
+        _openGame.value = modality
+        load(modality, contest = null)
+    }
+
+    fun close() {
+        pageLoad?.cancel()
+        saved.remove<String>(OPEN_GAME)
+        saved.remove<Int>(OPEN_CONTEST)
+        _openGame.value = null
+        _detail.value = DetailState.Loading
     }
 
     fun step(delta: Int) {
-        val current = _detail.value as? DetailState.Loaded ?: return
-        val modality = current.result.modality
-        val target = current.result.contest + delta
+        val page = _detail.value as? DetailState.Loaded ?: return
+        val modality = page.result.modality
+        val target = page.result.contest + delta
         if (target < 1) return
-        _detail.value = DetailState.Loading
-        viewModelScope.launch { load(modality) { repository.contest(modality, target) } }
+        // Arriving at the newest contest follows it again.
+        load(modality, target.takeUnless { it == newest(modality)?.contest })
     }
 
-    private suspend fun load(modality: Modality, fetch: suspend () -> LotteryResult) {
-        runCatching { fetch() }
-            .onSuccess { result ->
-                publish(modality, result)
-                _detail.value = DetailState.Loaded(result, hasNext = hasNext(result))
+    /** Asks after the open game's newest contest, or loads a failed page again. */
+    fun refreshDetail() {
+        val modality = _openGame.value ?: return
+        when (_detail.value) {
+            is DetailState.Loaded -> viewModelScope.launch { refresh(modality, userAsked = true) }
+            DetailState.Failed -> load(modality, saved.get<Int>(OPEN_CONTEST))
+            DetailState.Loading, DetailState.NotFound -> Unit
+        }
+    }
+
+    /**
+     * Puts [contest] of [modality] on the page, or its newest when [contest] is
+     * null. A newest nobody has seen yet arrives through the game's own refresh,
+     * which [publish]es it or fails the page.
+     */
+    private fun load(modality: Modality, contest: Int?) {
+        saved[OPEN_CONTEST] = contest
+        pageLoad?.cancel()
+        val newest = newest(modality)
+        if (contest == null && newest != null) {
+            show(newest)
+            return
+        }
+        _detail.value = DetailState.Loading
+        if (contest == null) {
+            viewModelScope.launch { refresh(modality, userAsked = false) }
+            return
+        }
+        pageLoad = viewModelScope.launch {
+            try {
+                show(repository.contest(modality, contest))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ContestNotFoundException) {
+                _detail.value = DetailState.NotFound
+            } catch (e: Exception) {
+                _detail.value = DetailState.Failed
             }
-            .onFailure { failure ->
-                _detail.value =
-                    if (failure is ContestNotFoundException) DetailState.NotFound
-                    else DetailState.Failed
-            }
+        }
     }
 
     private fun publish(modality: Modality, result: LotteryResult) {
-        newestContest[modality] = maxOf(newestContest[modality] ?: 0, result.contest)
-        _games.update { states ->
-            val known = (states[modality] as? GameState.Loaded)?.result
-            if (known != null && known.contest > result.contest) states
-            else states + (modality to GameState.Loaded(result))
-        }
-        val open = _detail.value
-        if (open is DetailState.Loaded && open.result.modality == modality &&
-            open.result.contest == result.contest
-        ) {
-            _detail.value = DetailState.Loaded(result, hasNext = hasNext(result))
+        val newest = newest(modality)?.takeIf { it.contest > result.contest } ?: result
+        _games.update { it + (modality to GameState.Loaded(newest)) }
+
+        val page = _detail.value
+        when {
+            followsNewest(modality) -> show(newest)
+            page is DetailState.Loaded && page.result.modality == modality -> show(page.result)
         }
     }
 
-    private fun hasNext(result: LotteryResult): Boolean =
-        result.contest < (newestContest[result.modality] ?: result.contest)
+    private fun followsNewest(modality: Modality): Boolean =
+        _openGame.value == modality && saved.get<Int>(OPEN_CONTEST) == null
 
+    private fun show(result: LotteryResult) {
+        _detail.value = DetailState.Loaded(result, hasNext = hasNext(result))
+    }
+
+    private fun newest(modality: Modality): LotteryResult? =
+        (_games.value[modality] as? GameState.Loaded)?.result
+
+    private fun hasNext(result: LotteryResult): Boolean =
+        result.contest < (newest(result.modality)?.contest ?: result.contest)
+
+    private companion object {
+        const val OPEN_GAME = "open_game"
+        const val OPEN_CONTEST = "open_contest"
+    }
 }

@@ -105,6 +105,8 @@ the app costs a string change rather than a new store listing.
 - A drawn result cannot change, so a request can only discover a contest drawn
   since. A game whose next draw is still ahead is not asked about at all, and
   no game is asked twice inside a minute however often the list is pulled.
+  Nothing polls: returning to the app runs the automatic check again once the
+  last one is five minutes old.
 - A result shared as a picture is composed at a density of its own, so the
   image does not vary with the screen that made it.
 - Each game's colour is derived from one hue in OKLCH at a lightness and chroma
