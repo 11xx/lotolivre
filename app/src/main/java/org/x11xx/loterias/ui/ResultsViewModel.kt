@@ -3,8 +3,8 @@ package org.x11xx.loterias.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -188,15 +188,17 @@ class ResultsViewModel(
             return
         }
         pageLoad = viewModelScope.launch {
-            try {
-                show(repository.contest(modality, contest))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: ContestNotFoundException) {
-                _detail.value = DetailState.NotFound
-            } catch (e: Exception) {
-                _detail.value = DetailState.Failed
-            }
+            val outcome = runCatching { repository.contest(modality, contest) }
+            // A blocking request runs to its answer even once the page is left,
+            // and an error it ends in would outrank the cancellation.
+            ensureActive()
+            outcome
+                .onSuccess(::show)
+                .onFailure { failure ->
+                    _detail.value =
+                        if (failure is ContestNotFoundException) DetailState.NotFound
+                        else DetailState.Failed
+                }
         }
     }
 

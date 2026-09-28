@@ -4,12 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
@@ -117,22 +119,29 @@ class ResultsViewModelTest {
 
     @Test
     fun `a contest that arrives after its page was left stays off the next one`() =
-        runTest(dispatcher) {
-            val viewModel = viewModel()
-            advanceUntilIdle()
-            val gate = CompletableDeferred<Unit>().also { source.gate = it }
-            viewModel.open(Modality.MEGA_SENA)
-            viewModel.step(-1)
-            runCurrent()
+        leaveWhileLoading(answerFails = false)
 
-            viewModel.close()
-            viewModel.open(Modality.QUINA)
-            gate.complete(Unit)
-            advanceUntilIdle()
+    @Test
+    fun `an error that arrives after its page was left stays off the next one`() =
+        leaveWhileLoading(answerFails = true)
 
-            val page = viewModel.detail.value as DetailState.Loaded
-            assertEquals(Modality.QUINA, page.result.modality)
-        }
+    private fun leaveWhileLoading(answerFails: Boolean) = runTest(dispatcher) {
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        val gate = CompletableDeferred<Unit>().also { source.gate = it }
+        viewModel.open(Modality.MEGA_SENA)
+        viewModel.step(-1)
+        runCurrent()
+
+        viewModel.close()
+        viewModel.open(Modality.QUINA)
+        source.offline = answerFails
+        gate.complete(Unit)
+        advanceUntilIdle()
+
+        val page = viewModel.detail.value as? DetailState.Loaded
+        assertEquals(Modality.QUINA, page?.result?.modality)
+    }
 
     @Test
     fun `a page that cannot load says so, and loads on retry`() = runTest(dispatcher) {
@@ -174,7 +183,11 @@ private class FakeSource : ResultsDataSource {
     var offline = false
     var requests = 0
 
-    /** Holds every request for one contest until it completes. */
+    /**
+     * Holds every request for one contest until it completes. Like a blocking
+     * HTTP call, a held request runs to its answer even once its caller is
+     * cancelled.
+     */
     var gate: CompletableDeferred<Unit>? = null
 
     /** Draws the next contest of [modality] and returns its number. */
@@ -188,7 +201,7 @@ private class FakeSource : ResultsDataSource {
 
     override suspend fun contest(modality: Modality, contest: Int): String {
         requests++
-        gate?.await()
+        gate?.let { withContext(NonCancellable) { it.await() } }
         if (offline) throw IOException("offline")
         if (contest > newest.getValue(modality)) throw ContestNotFoundException("no contest $contest")
         return body(modality, contest)
