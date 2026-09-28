@@ -8,7 +8,8 @@ carries no Caixa logo or visual-identity asset, and names no game.
 derive from them: `logo-celtic-transparent.svg` drops the canvas,
 `logo-celtic-themed-monochrome.svg` reduces the mark to the silhouette Android
 tints from the wallpaper, `favicon.svg` is the same mark tuned for 48px, and
-the two wordmarks set it beside the name.
+the two wordmarks set it beside the name. `numerals.py` outlines the numerals
+for the launcher icon, which cannot set type.
 
 ## Geometry
 
@@ -33,12 +34,15 @@ negative space without anything cut away for it.
 
 ## Where it is drawn
 
-- **Launcher icon** — `app/src/main/res/drawable/ic_launcher_*.xml`. The
-  numerals, the notches and the inlay strokes fall under a pixel at launcher
-  sizes, so the adaptive icon carries the rings, the holes and the star alone,
-  scaled to span the 66dp safe zone. Its canvas follows the system theme
-  through `@color/logo_canvas`; the rings are the same either way, which is
-  true of the masters too.
+- **Launcher icon** — `app/src/main/res/drawable/ic_launcher_*.xml`. The mark
+  in full, at the masters' proportions: their 512 canvas spans the icon's
+  visible 72dp, which keeps the guide ring inside the safe zone. The numerals
+  are outlines of the typeface the in-app logo sets them in, Google Sans at
+  bold with tabular figures, placed the way the app places text. The canvas,
+  guide ring and numerals follow the system theme through `@color/logo_canvas`,
+  `logo_guide` and `logo_ink`, the in-app logo's two palettes; the rings are
+  the same either way, which is true of the masters too. The themed icon is the
+  monochrome master's silhouette: rings, star and numerals.
 - **In app** — `LotoLivreLogo`, which draws the mark in full, numerals
   included, on its own canvas rather than the surface behind it.
 

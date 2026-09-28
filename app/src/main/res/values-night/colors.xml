@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="logo_canvas">#0B0F0D</color>
+    <color name="logo_guide">#1A2922</color>
+    <color name="logo_ink">#74C69D</color>
     <color name="window_background">#0F1014</color>
 </resources>
