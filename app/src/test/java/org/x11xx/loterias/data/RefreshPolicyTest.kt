@@ -19,7 +19,7 @@ class RefreshPolicyTest {
     fun `a game with nothing cached is always fetched`() {
         assertTrue(
             policy.shouldFetch(
-                lastFetched = null,
+                lastAsked = null,
                 nextDraw = today.plusDays(5),
                 userAsked = false,
                 hasCachedResult = false,
@@ -31,7 +31,7 @@ class RefreshPolicyTest {
     fun `a draw still in the future is not asked about`() {
         assertFalse(
             policy.shouldFetch(
-                lastFetched = null,
+                lastAsked = null,
                 nextDraw = today.plusDays(1),
                 userAsked = false,
                 hasCachedResult = true,
@@ -43,7 +43,7 @@ class RefreshPolicyTest {
     fun `the day of the draw is asked about`() {
         assertTrue(
             policy.shouldFetch(
-                lastFetched = null,
+                lastAsked = null,
                 nextDraw = today,
                 userAsked = false,
                 hasCachedResult = true,
@@ -55,7 +55,7 @@ class RefreshPolicyTest {
     fun `a game that publishes no next date is asked about`() {
         assertTrue(
             policy.shouldFetch(
-                lastFetched = null,
+                lastAsked = null,
                 nextDraw = null,
                 userAsked = false,
                 hasCachedResult = true,
@@ -67,7 +67,7 @@ class RefreshPolicyTest {
     fun `pulling the list answers a schedule that says wait`() {
         assertTrue(
             policy.shouldFetch(
-                lastFetched = null,
+                lastAsked = null,
                 nextDraw = today.plusDays(3),
                 userAsked = true,
                 hasCachedResult = true,
@@ -82,7 +82,7 @@ class RefreshPolicyTest {
             assertFalse(
                 "fetched at $last should still be rate limited",
                 policy.shouldFetch(
-                    lastFetched = last,
+                    lastAsked = last,
                     nextDraw = today,
                     userAsked = true,
                     hasCachedResult = true,
@@ -95,7 +95,7 @@ class RefreshPolicyTest {
     fun `the interval expires`() {
         assertTrue(
             policy.shouldFetch(
-                lastFetched = now.minus(Duration.ofMinutes(2)),
+                lastAsked = now.minus(Duration.ofMinutes(2)),
                 nextDraw = today,
                 userAsked = false,
                 hasCachedResult = true,
@@ -118,7 +118,7 @@ class RefreshPolicyTest {
     fun `an empty cache outranks the interval only once it has passed`() {
         assertFalse(
             policy.shouldFetch(
-                lastFetched = now.minusSeconds(10),
+                lastAsked = now.minusSeconds(10),
                 nextDraw = null,
                 userAsked = true,
                 hasCachedResult = false,

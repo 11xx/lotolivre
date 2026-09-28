@@ -15,7 +15,7 @@ import java.time.LocalDate
  * - A game whose next draw is still in the future is not asked about at all,
  *   because nothing can have been published yet.
  * - No game is asked about twice inside [minimumInterval], however often the
- *   list is pulled.
+ *   list is pulled, and whether or not the last ask was answered.
  *
  * Pulling the list down is an explicit ask and answers the first rule, since
  * the reader may know something the schedule does not — a draw running late,
@@ -35,13 +35,13 @@ class RefreshPolicy(
         lastChecked == null || Duration.between(lastChecked, clock.instant()) >= staleAfter
 
     fun shouldFetch(
-        lastFetched: Instant?,
+        lastAsked: Instant?,
         nextDraw: LocalDate?,
         userAsked: Boolean,
         hasCachedResult: Boolean,
     ): Boolean {
-        if (lastFetched != null &&
-            Duration.between(lastFetched, clock.instant()) < minimumInterval
+        if (lastAsked != null &&
+            Duration.between(lastAsked, clock.instant()) < minimumInterval
         ) {
             return false
         }

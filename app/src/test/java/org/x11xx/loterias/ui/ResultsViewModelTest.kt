@@ -153,9 +153,28 @@ class ResultsViewModelTest {
         assertEquals(DetailState.Failed, viewModel.detail.value)
 
         source.offline = false
+        clock.advance(Duration.ofMinutes(1))
         viewModel.refreshDetail()
         advanceUntilIdle()
         assertEquals(source.newest.getValue(Modality.MEGA_SENA), viewModel.detail.value.contest)
+    }
+
+    @Test
+    fun `a retry inside the minute asks nothing and leaves the page failed`() = runTest(dispatcher) {
+        source.offline = true
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        viewModel.open(Modality.MEGA_SENA)
+        advanceUntilIdle()
+        val asked = source.requests
+
+        source.offline = false
+        clock.advance(Duration.ofSeconds(30))
+        viewModel.refreshDetail()
+        advanceUntilIdle()
+
+        assertEquals(asked, source.requests)
+        assertEquals(DetailState.Failed, viewModel.detail.value)
     }
 }
 

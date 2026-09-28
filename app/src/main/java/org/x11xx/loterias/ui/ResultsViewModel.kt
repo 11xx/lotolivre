@@ -70,7 +70,7 @@ class ResultsViewModel(
     private val _detail = MutableStateFlow<DetailState>(DetailState.Loading)
     val detail: StateFlow<DetailState> = _detail.asStateFlow()
 
-    private val lastFetched = mutableMapOf<Modality, Instant>()
+    private val lastAsked = mutableMapOf<Modality, Instant>()
     private var lastChecked: Instant? = null
     private var pageLoad: Job? = null
 
@@ -105,19 +105,22 @@ class ResultsViewModel(
 
         if (modality in _refreshing.value) return
         val allowed = policy.shouldFetch(
-            lastFetched = lastFetched[modality],
+            lastAsked = lastAsked[modality],
             nextDraw = known?.next?.date,
             userAsked = userAsked,
             hasCachedResult = known != null,
         )
-        if (!allowed) return
+        if (!allowed) {
+            failWaitingPage(modality)
+            return
+        }
 
         _refreshing.update { it + modality }
         try {
             inFlight.withPermit {
+                lastAsked[modality] = clock.instant()
                 runCatching { repository.refreshLatest(modality) }
                     .onSuccess {
-                        lastFetched[modality] = clock.instant()
                         publish(modality, it)
                         _updatedAt.value = LocalTime.now(clock)
                     }
@@ -126,9 +129,7 @@ class ResultsViewModel(
                             if (states[modality] is GameState.Loaded) states
                             else states + (modality to GameState.Failed)
                         }
-                        if (followsNewest(modality) && _detail.value == DetailState.Loading) {
-                            _detail.value = DetailState.Failed
-                        }
+                        failWaitingPage(modality)
                     }
             }
         } finally {
@@ -215,6 +216,13 @@ class ResultsViewModel(
 
     private fun followsNewest(modality: Modality): Boolean =
         _openGame.value == modality && saved.get<Int>(OPEN_CONTEST) == null
+
+    /** A page waiting on [modality]'s newest, with no answer coming, has failed. */
+    private fun failWaitingPage(modality: Modality) {
+        if (followsNewest(modality) && _detail.value == DetailState.Loading) {
+            _detail.value = DetailState.Failed
+        }
+    }
 
     private fun show(result: LotteryResult) {
         _detail.value = DetailState.Loaded(result, hasNext = hasNext(result))
