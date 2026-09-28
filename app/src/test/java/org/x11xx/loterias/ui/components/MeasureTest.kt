@@ -1,8 +1,10 @@
 package org.x11xx.loterias.ui.components
 
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MeasureTest {
@@ -48,10 +50,26 @@ class MeasureTest {
 
     @Test
     fun `a ball keeps its size while the row fits and shrinks once it does not`() {
-        assertEquals(46.dp, fittedBallSize(46.dp, 400.dp, 6))
+        val one = Density(1f)
+        assertEquals(46.dp, fittedBallSize(46.dp, 400.dp, 6, one))
         // Six balls with five gaps in 305dp: (305 - 35) / 6.
-        assertEquals(45.dp, fittedBallSize(46.dp, 305.dp, 6))
-        assertEquals(46.dp, fittedBallSize(46.dp, Dp.Infinity, 8))
+        assertEquals(45.dp, fittedBallSize(46.dp, 305.dp, 6, one))
+        assertEquals(46.dp, fittedBallSize(46.dp, Dp.Infinity, 8, one))
+    }
+
+    @Test
+    fun `a full row fits in whole pixels, the last ball as round as the first`() {
+        // The shared picture: 336dp of row at 3x, eight balls of Lotofácil.
+        val picture = Density(3f)
+        val ball = with(picture) { fittedBallSize(46.dp, 336.dp, 8, picture).roundToPx() }
+        val gap = with(picture) { BallGap.roundToPx() }
+        val row = with(picture) { 336.dp.roundToPx() }
+        assertTrue("8 x $ball + 7 x $gap overruns $row", 8 * ball + 7 * gap <= row)
+    }
+
+    @Test
+    fun `no room gives no ball rather than a negative one`() {
+        assertEquals(0.dp, fittedBallSize(46.dp, 0.dp, 6, Density(3f)))
     }
 
     @Test

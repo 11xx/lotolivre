@@ -1,5 +1,6 @@
 package org.x11xx.loterias.ui.components
 
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -46,10 +47,19 @@ fun longestEvenRow(count: Int, max: Int): Int {
     return (count + rows - 1) / rows
 }
 
-/** The largest ball up to [preferred] that fits [perRow] of them, gaps included, in [width]. */
-fun fittedBallSize(preferred: Dp, width: Dp, perRow: Int): Dp =
-    if (width == Dp.Infinity || perRow <= 0) preferred
-    else minOf(preferred, (width - BallGap * (perRow - 1)) / perRow)
+/**
+ * The largest ball up to [preferred] that fits [perRow] of them, gaps included,
+ * in [width]. It is worked out in whole pixels because every ball and gap is
+ * laid out at a whole pixel: a size worked out in dp can round up on each ball
+ * and leave the last one squeezed out of round.
+ */
+fun fittedBallSize(preferred: Dp, width: Dp, perRow: Int, density: Density): Dp {
+    if (width == Dp.Infinity || perRow <= 0) return preferred
+    return with(density) {
+        val room = width.roundToPx() - BallGap.roundToPx() * (perRow - 1)
+        minOf(preferred, (room / perRow).coerceAtLeast(0).toDp())
+    }
+}
 
 /** Side padding that centres content at [ReadableWidth] and never drops below [minimum]. */
 fun readableInset(windowWidth: Dp, minimum: Dp): Dp =

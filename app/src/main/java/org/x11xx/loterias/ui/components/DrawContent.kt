@@ -166,8 +166,9 @@ private fun Balls(
  */
 @Composable
 private fun ballSizeFor(count: Int, preferred: Dp, width: Dp): Dp {
-    val grown = preferred * LocalDensity.current.fontScale.coerceIn(1f, MaxBallGrowth)
-    return fittedBallSize(grown, width, longestEvenRow(count, MaxBallsPerRow))
+    val density = LocalDensity.current
+    val grown = preferred * density.fontScale.coerceIn(1f, MaxBallGrowth)
+    return fittedBallSize(grown, width, longestEvenRow(count, MaxBallsPerRow), density)
 }
 
 /** One cell of the Loteca coupon: home win, away win, or a drawn cross. */

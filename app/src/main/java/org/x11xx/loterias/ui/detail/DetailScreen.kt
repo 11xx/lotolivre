@@ -126,9 +126,9 @@ private fun ContestStepper(state: DetailState, title: String, onStep: (Int) -> U
         ?: MaterialTheme.colorScheme.onSurface
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         // The steppers give up their labels before the heading between them
-        // would lose its date. Text grows with the font size, so the room is
-        // judged in text units rather than in dp.
-        val compact = maxWidth / LocalDensity.current.fontScale < CompactStepperWidth
+        // would lose its date. Text grows with the font size, so the row's room
+        // is judged in text units rather than in dp.
+        val compact = (maxWidth - inset * 2) / LocalDensity.current.fontScale < CompactStepperWidth
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -163,8 +163,8 @@ private fun ContestStepper(state: DetailState, title: String, onStep: (Int) -> U
     }
 }
 
-/** Below this much room, in text units, the step buttons show their arrows alone. */
-private val CompactStepperWidth = 400.dp
+/** Below this much room in the row, in text units, the step buttons show their arrows alone. */
+private val CompactStepperWidth = 380.dp
 
 @Composable
 private fun StepButton(
