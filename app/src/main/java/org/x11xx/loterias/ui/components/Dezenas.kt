@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -31,7 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.x11xx.loterias.ui.theme.GameColors
 
-/** A drawn dezena. Circles everywhere, whatever the game or the count. */
+/**
+ * A drawn dezena. Circles everywhere, whatever the game or the count. The
+ * numeral is sized from the ball rather than the reader's font size, so it
+ * always fits; the ball is what grows for a larger font.
+ */
 @Composable
 fun Ball(
     label: String,
@@ -49,7 +54,7 @@ fun Ball(
         Text(
             text = label,
             color = colors.onAccent,
-            fontSize = (size.value * 0.44f).sp,
+            fontSize = with(LocalDensity.current) { (size * 0.44f).toSp() },
             style = MaterialTheme.typography.labelLarge,
         )
     }
@@ -142,7 +147,7 @@ fun CloverToken(
         Text(
             text = label,
             color = colors.onAccent,
-            fontSize = (size.value * 0.44f).sp,
+            fontSize = with(LocalDensity.current) { (size * 0.44f).toSp() },
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelLarge,
         )

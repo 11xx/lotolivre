@@ -260,6 +260,9 @@ private fun TierRow(
         if (header) MaterialTheme.typography.labelMedium else MaterialTheme.typography.bodyLarge
     val colour =
         if (header) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+    // Headers are the words a narrow column cuts first, and read at a smaller
+    // size than figures do.
+    val minimum = if (header) 9.sp else 11.sp
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -273,7 +276,7 @@ private fun TierRow(
             style = style,
             color = colour,
             textAlign = TextAlign.End,
-            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = minimum, maxFontSize = style.fontSize),
             maxLines = 1,
             modifier = Modifier.weight(0.75f),
         )
@@ -282,7 +285,7 @@ private fun TierRow(
             style = style,
             color = accent ?: colour,
             textAlign = TextAlign.End,
-            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = minimum, maxFontSize = style.fontSize),
             maxLines = 1,
             modifier = Modifier.weight(1.1f),
         )

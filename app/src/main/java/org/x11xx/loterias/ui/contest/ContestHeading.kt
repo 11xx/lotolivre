@@ -23,8 +23,9 @@ import java.time.LocalDate
  * detail screen puts the contest steppers either side of it; the shared image
  * has nothing to step with, so it stands alone.
  *
- * The name shrinks rather than wraps — a long one like Dia de Sorte would
- * otherwise take a second line and shift everything below it.
+ * The name and the line beneath it shrink rather than wrap — a long name
+ * like Dia de Sorte would otherwise take a second line and shift everything
+ * below it.
  */
 @Composable
 fun ContestHeading(
@@ -56,6 +57,10 @@ fun ContestHeading(
                 text = stringResource(R.string.contest_number, contest) + " · " + date.asFullDate(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 9.sp,
+                    maxFontSize = MaterialTheme.typography.labelSmall.fontSize,
+                ),
                 maxLines = 1,
                 textAlign = TextAlign.Center,
             )
