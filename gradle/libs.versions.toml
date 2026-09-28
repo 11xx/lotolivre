@@ -10,6 +10,8 @@ kotlin = "2.4.20"
 composeBom = "2026.09.00"
 okhttp = "5.5.0"
 kotlinxSerialization = "1.11.0"
+# The coroutines the app resolves through AndroidX, not the newest release:
+# the test library has to match what the app actually runs.
 kotlinxCoroutines = "1.9.0"
 
 [libraries]
