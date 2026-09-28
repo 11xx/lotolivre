@@ -104,6 +104,17 @@ class RefreshPolicyTest {
     }
 
     @Test
+    fun `a check younger than the stale interval still stands`() {
+        assertFalse(policy.isStale(now.minus(Duration.ofMinutes(4))))
+    }
+
+    @Test
+    fun `a check as old as the stale interval, or none at all, has gone stale`() {
+        assertTrue(policy.isStale(now.minus(Duration.ofMinutes(5))))
+        assertTrue(policy.isStale(null))
+    }
+
+    @Test
     fun `an empty cache outranks the interval only once it has passed`() {
         assertFalse(
             policy.shouldFetch(
