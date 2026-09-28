@@ -92,6 +92,21 @@ class ResultMapperTest {
     }
 
     @Test
+    fun `federal names its tiers by the rank they pay, not as hit counts`() {
+        val tiers = load(Modality.FEDERAL).tiers
+        assertEquals((1..5).map { "${it}º prêmio" }, tiers.map { it.label })
+        assertEquals("15 acertos", load(Modality.LOTOFACIL).tiers.first().label)
+    }
+
+    @Test
+    fun `dupla sena marks each tier with the draw it belongs to`() {
+        assertEquals(
+            listOf(6, 5, 4, 3).map { "1º · $it acertos" } + listOf(6, 5, 4, 3).map { "2º · $it acertos" },
+            load(Modality.DUPLA_SENA).tiers.map { it.label },
+        )
+    }
+
+    @Test
     fun `loteca has no dezenas at all and reads its matches instead`() {
         val result = load(Modality.LOTECA)
         val draw = result.draw as Draw.Matches

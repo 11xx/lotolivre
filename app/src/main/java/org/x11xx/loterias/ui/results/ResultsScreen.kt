@@ -2,6 +2,7 @@ package org.x11xx.loterias.ui.results
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import org.x11xx.loterias.R
 import org.x11xx.loterias.domain.Modality
 import org.x11xx.loterias.ui.GameState
+import org.x11xx.loterias.ui.components.readableInset
 import org.x11xx.loterias.ui.icons.MenuIcon
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -49,28 +51,33 @@ fun ResultsScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    PullToRefreshBox(
-        isRefreshing = refreshing,
-        onRefresh = onRefresh,
-        modifier = modifier.fillMaxSize(),
-    ) {
-        LazyColumn(
-            state = listState,
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        // The cards keep to a readable measure however wide the window, while
+        // the whole width still scrolls and pulls.
+        val inset = readableInset(maxWidth, minimum = 16.dp)
+        PullToRefreshBox(
+            isRefreshing = refreshing,
+            onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            item {
-                Header(updatedAt = updatedAt, onOpenMenu = onOpenMenu)
-            }
-            items(Modality.entries, key = { it.slug }) { modality ->
-                when (val state = games[modality]) {
-                    is GameState.Loaded -> ResultCard(
-                        result = state.result,
-                        onClick = { onOpenGame(modality) },
-                    )
-                    GameState.Failed -> FailedCard(modality, onRetry)
-                    else -> LoadingCard(modality)
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = inset, end = inset, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                item {
+                    Header(updatedAt = updatedAt, onOpenMenu = onOpenMenu)
+                }
+                items(Modality.entries, key = { it.slug }) { modality ->
+                    when (val state = games[modality]) {
+                        is GameState.Loaded -> ResultCard(
+                            result = state.result,
+                            onClick = { onOpenGame(modality) },
+                        )
+                        GameState.Failed -> FailedCard(modality, onRetry)
+                        else -> LoadingCard(modality)
+                    }
                 }
             }
         }

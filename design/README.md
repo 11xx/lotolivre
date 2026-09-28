@@ -20,6 +20,19 @@ canvas and carries the notes explaining the decisions they encode.
 - **Card height follows what the game draws, never the prize.** Quina shows
   five, Lotomania twenty, Federal five ticket numbers, Loteca fourteen match
   results. Sizing by prize would make the list reflow week to week.
+- **A draw's rows follow its count, never the width.** At most eight balls to
+  a row, the rows as even as the count allows — Lotofácil eight and seven,
+  Lotomania seven, seven and six, each Dupla Sena draw one row of six — and the
+  balls shrink to keep a row whole. A game breaks the same way on every screen
+  and in a shared picture. Where an artboard wraps its balls to the width, this
+  rule wins.
+- **Content keeps a readable measure.** On a wide window the list and the
+  contest centre at 600dp rather than stretching a prize table's figures away
+  from their labels, and on a cramped one the contest steppers fold to their
+  arrows before the heading between them loses its date.
+- **A total of nothing is left out.** An accumulation, estimate or revenue of
+  zero says nothing, so no amount is shown for it; Federal has none of the
+  three. The next contest's number and date are not totals and stay.
 - **The game's colour is one hue** used at a fixed lightness and chroma for the
   balls, the prize value and a wash behind the card, computed per theme rather
   than stored twice.

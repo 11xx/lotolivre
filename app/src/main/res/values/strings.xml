@@ -52,6 +52,8 @@
     <string name="detail_accumulated">Acumulado</string>
     <string name="detail_estimate">Estimativa %1$d</string>
     <string name="detail_estimate_plain">Estimativa</string>
+    <string name="detail_next_contest">Próximo concurso %1$d</string>
+    <string name="detail_next_contest_plain">Próximo concurso</string>
     <string name="detail_collected">Arrecadação</string>
     <string name="detail_no_winner">Acumulou</string>
 

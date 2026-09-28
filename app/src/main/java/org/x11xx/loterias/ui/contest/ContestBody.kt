@@ -103,77 +103,99 @@ fun ContestBody(
             }
         }
 
+        // A total of nothing says nothing: Federal reports no accumulation,
+        // estimate or revenue, and a jackpot won leaves nothing accumulated,
+        // which the top tier already shows. The next contest's number and date
+        // are not totals, so they stay without an amount beside them.
         val next = result.next
-        if (next != null) {
+        val accumulated = result.accumulatedPrize.takeIf { it.signum() > 0 }
+        val estimate = next?.estimatedPrize?.takeIf { it.signum() > 0 }
+        val upcoming = next?.takeIf { estimate != null || it.contest != null || it.date != null }
+        if (accumulated != null || upcoming != null) {
             ContestCard {
                 Column(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 15.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.detail_accumulated),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            text = result.accumulatedPrize.asMoney(),
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.Bottom,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
+                    if (accumulated != null) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom,
+                        ) {
                             Text(
-                                text = next.contest
-                                    ?.let { stringResource(R.string.detail_estimate, it) }
-                                    ?: stringResource(R.string.detail_estimate_plain),
+                                text = stringResource(R.string.detail_accumulated),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
-                            next.date?.let {
+                            Text(
+                                text = accumulated.asMoney(),
+                                style = MaterialTheme.typography.labelLarge,
+                            )
+                        }
+                    }
+                    if (accumulated != null && upcoming != null) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+                    if (upcoming != null) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.Bottom,
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = it.asFullDate(),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    text = when {
+                                        estimate == null -> upcoming.contest
+                                            ?.let { stringResource(R.string.detail_next_contest, it) }
+                                            ?: stringResource(R.string.detail_next_contest_plain)
+                                        else -> upcoming.contest
+                                            ?.let { stringResource(R.string.detail_estimate, it) }
+                                            ?: stringResource(R.string.detail_estimate_plain)
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                upcoming.date?.let {
+                                    Text(
+                                        text = it.asFullDate(),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                            if (estimate != null) {
+                                Text(
+                                    text = estimate.asMoney(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = colors.accent,
+                                    fontSize = 20.sp,
                                 )
                             }
                         }
-                        Text(
-                            text = next.estimatedPrize.asMoney(),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = colors.accent,
-                            fontSize = 20.sp,
-                        )
                     }
                 }
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = stringResource(R.string.detail_collected),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = result.collected.asMoney(),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (result.collected.signum() > 0) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = stringResource(R.string.detail_collected),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = result.collected.asMoney(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -247,6 +269,9 @@ private fun TierRow(
         if (header) MaterialTheme.typography.labelMedium else MaterialTheme.typography.bodyLarge
     val colour =
         if (header) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+    // Headers are the words a narrow column cuts first, and read at a smaller
+    // size than figures do.
+    val minimum = if (header) 9.sp else 11.sp
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -260,7 +285,7 @@ private fun TierRow(
             style = style,
             color = colour,
             textAlign = TextAlign.End,
-            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = minimum, maxFontSize = style.fontSize),
             maxLines = 1,
             modifier = Modifier.weight(0.75f),
         )
@@ -269,7 +294,7 @@ private fun TierRow(
             style = style,
             color = accent ?: colour,
             textAlign = TextAlign.End,
-            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = style.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = minimum, maxFontSize = style.fontSize),
             maxLines = 1,
             modifier = Modifier.weight(1.1f),
         )
