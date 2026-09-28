@@ -13,7 +13,7 @@ import org.x11xx.loterias.R
 private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs,
+    certificates = R.array.font_provider_certs,
 )
 
 private val displayFont = GoogleFont("Google Sans")
