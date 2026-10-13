@@ -22,6 +22,15 @@ logotipo ou elemento da identidade visual das Loterias Caixa é distribuído com
 este aplicativo.
 
 Os resultados são dados públicos, obtidos da API do portal de loterias da Caixa.
+Essa API não é documentada e pode mudar sem aviso.
+
+Os resultados já consultados ficam em cache; concursos anteriores são lidos
+primeiro desse cache. Não há consulta por temporizador. Ao voltar ao aplicativo,
+a lista é reconsiderada se a última verificação tem pelo menos cinco minutos.
+Uma modalidade com resultado em cache e próximo sorteio ainda no futuro não é
+consultada automaticamente. Puxar a lista permite conferir esse resultado mesmo
+antes da data prevista, mas nenhuma modalidade é consultada duas vezes dentro
+de um minuto, inclusive quando a tentativa anterior falhou.
 
 ## Compilar
 
@@ -32,6 +41,21 @@ Os resultados são dados públicos, obtidos da API do portal de loterias da Caix
 
 O Gradle fixa a JVM do próprio daemon em `gradle/gradle-daemon-jvm.properties`,
 então não é preciso configurar `JAVA_HOME`.
+
+Para gerar um APK de release, crie `release-signing.properties` na raiz do
+projeto, com `storeFile`, `storePassword`, `keyAlias` e `keyPassword`. `storeFile`
+indica uma chave privada existente; caminhos relativos são resolvidos a partir
+da raiz do projeto. O arquivo de propriedades e arquivos `*.jks` e `*.keystore`
+são ignorados pelo Git. Mantenha a chave e sua cópia de segurança fora do
+repositório.
+
+```sh
+./gradlew :app:assembleRelease
+```
+
+O build de release exige esses dados de assinatura e falha se eles estiverem
+ausentes ou inválidos. Ele não usa a chave de debug. Os builds de debug e os
+testes de unidade não precisam desse arquivo.
 
 ## Licença
 

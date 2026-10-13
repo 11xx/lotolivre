@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+/release-signing.properties
+*.jks
+*.keystore
+/design-refs/
