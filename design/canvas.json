@@ -11,7 +11,7 @@
     { "id": "altura-cartao", "x": 0, "y": -170, "w": 420,
       "text": "Bolas em todas as listas. A altura do cartão acompanha o que o jogo sorteia — Quina 5, Lotofácil 15, Lotomania 20, Federal 5 bilhetes, Loteca 14 jogos — e nunca o tamanho do prêmio, que faria a lista pular de semana em semana." },
     { "id": "menu-sobre", "x": 900, "y": -170, "w": 420,
-      "text": "Duas telas não justificam uma barra inferior. O menu lateral reúne Resultados, Sobre e o tema (sistema, claro, escuro).\nSobre é onde ficam o aviso de app não oficial e os créditos de marca." },
+      "text": "Dois destinos não justificam uma barra inferior. O menu lateral reúne Resultados, Sobre e o tema (sistema, claro, escuro).\nSobre é onde ficam o aviso de app não oficial e os créditos de marca." },
     { "id": "fonte", "x": 900, "y": 900, "w": 480,
       "text": "Tipografia: Google Sans, uma família só, algarismos tabulares, sem monoespaçada.\nA família está no repositório Google Fonts sob a SIL Open Font License 1.1. O app a baixa pelo provedor de fontes; a sans do sistema serve de alternativa." },
     { "id": "simbolos", "x": 2250, "y": 1180, "w": 400,
