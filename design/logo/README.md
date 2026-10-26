@@ -48,3 +48,17 @@ negative space without anything cut away for it.
 
 The two are separate renderings of the same geometry, so a change to the
 measures above belongs in both.
+
+## Typeface source
+
+The launcher numerals use Google Sans **14.000**, bold at optical size 18,
+with tabular figures. The source is
+[`GoogleSans[GRAD,opsz,wght].ttf`](https://github.com/google/fonts/blob/main/ofl/googlesans/GoogleSans%5BGRAD%2Copsz%2Cwght%5D.ttf),
+Git blob `a5e76cc713206f1cfe9a7fc31cc1b6f035034d81`, under the
+[SIL Open Font License 1.1](https://github.com/google/fonts/blob/main/ofl/googlesans/OFL.txt).
+`numerals.py` generates the four paths used in both launcher drawables.
+
+The font is downloaded by the app's font provider, with the system sans as
+fallback; no font binary is bundled. The outlined logo is artwork:
+[OFL FAQ 1.1–1.1.2](https://openfontlicense.org/ofl-faq/) permits this use
+without changing the artwork's license.
